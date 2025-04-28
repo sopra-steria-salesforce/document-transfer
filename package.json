@@ -32,7 +32,7 @@
 		]
 	},
 	"devDependencies": {
-		"@flxbl-io/sfp": "^39.2.2",
+		"@flxbl-io/sfp": "^39.6.0",
 		"@lwc/eslint-plugin-lwc": "^1.8.2",
 		"@prettier/plugin-xml": "^3.4.1",
 		"@sa11y/jest": "^6.10.2",
