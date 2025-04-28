@@ -1,0 +1,11 @@
+# sf files
+**/profiles/*
+**/objectTranslations/*-en_US/*
+**/19-no.standardValueSetTranslation-meta.xml
+**/13-no.standardValueSetTranslation-meta.xml
+**/sfdc_chatbot_service_permset.permissionset-meta.xml
+**/*.md
+
+# buggy metadata
+**/AppSwitcher.appMenu*
+**/navigationMenus/*
