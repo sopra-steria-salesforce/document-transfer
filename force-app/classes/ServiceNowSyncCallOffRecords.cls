@@ -18,7 +18,7 @@ public with sharing class ServiceNowSyncCallOffRecords {
                 upsertCallOffRecords(callOffRecords);
             }
         }catch(Exception e) {
-            Utils.logFailure('ServiceNowSyncCallOffRecords', 'syncCallOffRecords', e.getMessage(), 'Failed', UserInfo.getUserName(), 'Exception occurred during API call');
+            Logger.error('ServiceNowSyncCallOffRecords', 'syncCallOffRecords' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during API call');
         }
     }
 
@@ -65,13 +65,14 @@ public with sharing class ServiceNowSyncCallOffRecords {
     }
 
     private static void upsertCallOffRecords(List<Call_Off_Contract__c> callOffRecords) {
-        System.debug(callOffRecords);
+        Logger.info('info (callOffRecords):' + callOffRecords);
         Boolean foundError = false;
         Database.UpsertResult[] upsertResults = Database.upsert(callOffRecords, Call_Off_Contract__c.Fields.Sys_Id_External__c, false);
         for (Database.UpsertResult upsertResult : upsertResults) {
             if (!upsertResult.isSuccess()) {
                 for (Database.Error error : upsertResult.getErrors()) {
-                    System.debug('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
+                    Logger.error('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
+                    Logger.saveLog();
                     foundError = true;
                 }
             }

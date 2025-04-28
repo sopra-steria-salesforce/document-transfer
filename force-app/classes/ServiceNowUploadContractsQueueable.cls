@@ -48,8 +48,9 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       }
     } catch (Exception ex) {
       // Log to Application_Log__c using the existing method
-      Utils.logFailure('ServiceNowUploadContractsQueueable', 'uploadContracts', ex.getMessage(),'Failed',UserInfo.getUserName(),'Exception occurred during contract upload. Opportunity Id: ' +opportunity.Id + '\n' +ex.getStackTraceString()
-      );
+      Logger.error('ServiceNowUploadContractsQueueable' + 'uploadContracts' + ex.getMessage() + 'Failed',UserInfo.getUserName() + 
+                    'Exception occurred during contract upload. Opportunity Id: ' + opportunity.Id + '\n' +ex.getStackTraceString());
+      Logger.saveLog();
 
       // Throw appropriate exception based on context
       if (System.isBatch() || System.isQueueable() || System.isFuture()) {
@@ -152,12 +153,12 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         return outerWrapper;
       }
     } catch (Exception e) {
-      Utils.logFailure(
-        'ServiceNowUploadContracts',
-        'createNewContracts',
-        e.getMessage(),
-        'Failed',
-        UserInfo.getUserName(),
+      Logger.error(
+        'ServiceNowUploadContracts' +
+        'createNewContracts' +
+        e.getMessage() +
+        'Failed' +
+        UserInfo.getUserName() +
         'Exception occurred during API call'
       );
     }

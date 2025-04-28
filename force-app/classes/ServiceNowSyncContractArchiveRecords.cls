@@ -12,8 +12,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
             );
             if (response.getStatusCode() == 200) {
                 ResponseWrapper responseWrapper = deserializeResponse(response);
-                System.debug('responseWrapper');
-                System.debug(responseWrapper);
+                Logger.info('responseWrapper' + responseWrapper);
                 List<Contract_Archive__c> contractsArchives = createContractArchives(responseWrapper);
                 upsertContractArchives(contractsArchives);
             }
@@ -86,27 +85,26 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
     private static void upsertContractArchives(List<Contract_Archive__c> contractsArchives) {
 //        try {
             Boolean foundError = false;
-            System.debug(contractsArchives);
+            Logger.info('contactsArchives' + contractsArchives);
             Database.UpsertResult[] upsertResults = Database.upsert(contractsArchives, Contract_Archive__c.Fields.Sys_Id_External__c, false);
             for (Database.UpsertResult upsertResult : upsertResults) {
                 if (!upsertResult.isSuccess()) {
                     for (Database.Error error : upsertResult.getErrors()) {
-                        System.debug('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
+                        Logger.error('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
+                        Logger.saveLog();
                     }
                     foundError = true;
                 }
             }
             if (!foundError) {
                 List<Contract_Archive__c> contractArchives = [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c WHERE Sys_Id_External__c IN :opportunityId2ExternalId.values()];
-                System.debug('contractArchives');
-                System.debug(contractArchives);
+                Logger.info('contractArchives' + contractArchives);
                 Map<String,String> externalId2contractId = new Map<String,String>();
                 for(Contract_Archive__c contractArchive : contractArchives){
                     externalId2contractId.put(contractArchive.Sys_Id_External__c, contractArchive.Id);
                 }
                 List<Opportunity> opportunities = [SELECT Id, Contract_Lookup__c FROM Opportunity WHERE Id IN :opportunityId2ExternalId.keySet()];
-                System.debug('opportunities');
-                System.debug(opportunities);
+                Logger.info('opportunities' + opportunities);
                 for(Opportunity opp : opportunities) {
                     opp.Contract_Lookup__c = externalId2contractId.get(opportunityId2ExternalId.get(opp.Id));
                 }

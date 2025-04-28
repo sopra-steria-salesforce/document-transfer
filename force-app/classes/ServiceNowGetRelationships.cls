@@ -7,16 +7,19 @@ public with sharing class ServiceNowGetRelationships {
         try {
             HttpResponse response = Utils.doRequest(Utils.NAMED_CREDENTIAL_SERVICE_NOW, Utils.API_GET_ALL_CONTRACTS_AND_CUSTOMERS_M2M, Utils.METHOD_GET, null);
             if (response.getStatusCode() == 200) {
-                System.debug(response.getBody());
+                Logger.info(response.getBody());
                 OuterWrapper outerWrapper = (OuterWrapper) System.JSON.deserialize(response.getBody(), OuterWrapper.class);
                 createFilterMaps();
                 createJunctions(outerWrapper);
                 upsert accountContractArchiveJunctions Account_Contract_Archive_Junction_Sys_Id__c;
             } else {
-                Utils.logFailure('ServiceNowGetRelationships', 'assignContractsWithAccounts', response.getBody(), 'Failed', UserInfo.getUserName(), 'Failed to retrieve relationships between Accounts and Contract Archives');
+                Logger.error('ServiceNowGetRelationships' + 'assignContractsWithAccounts' + response.getBody() + 'Failed' + UserInfo.getUserName() + 'Failed to retrieve relationships between Accounts and Contract Archives');
+                Logger.saveLog();
+
             }
         } catch (Exception e) {
-            Utils.logFailure('ServiceNowGetRelationships', 'assignContractsWithAccounts', e.getMessage(), 'Failed',  UserInfo.getUserName(), 'Exception occurred during API call');
+            Logger.error('ServiceNowGetRelationships' + 'assignContractsWithAccounts' + e.getMessage() + 'Failed' +  UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.saveLog();
         }
     }
 
@@ -29,7 +32,8 @@ public with sharing class ServiceNowGetRelationships {
                 }
             }
         } catch (Exception e) {
-            Utils.logFailure('ServiceNowGetRelationships', 'createJunctions', e.getMessage(), 'Failed', UserInfo.getUserName(), 'Exception occurred during junction creation');
+            Logger.error('ServiceNowGetRelationships' + 'createJunctions' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during junction creation');
+            Logger.saveLog();
         }
     }
 
