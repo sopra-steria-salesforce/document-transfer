@@ -1,0 +1,26 @@
+<template>
+    <lightning-card title="Contract Upload" icon-name="custom:custom14">
+        <lightning-record-edit-form
+                object-api-name={objectApiName}
+                record-id={recordId}
+
+        >
+            <lightning-output-field field-name={contractLookupField}> </lightning-output-field>
+            <lightning-output-field field-name={connectedToExistingContract}> </lightning-output-field>
+        </lightning-record-edit-form>
+        <div if:true={validateUpload}>
+        <div class="slds-m-around_medium">
+            <lightning-input type="file"
+                             accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
+                             label="Attachment" onchange={openfileUpload}></lightning-input>
+        </div>
+        </div>
+        <div if:false={validateUpload}>
+          Some message to user that cannot upload a file because has no connected contract and contract is assigned or has yes in connected contract but doesn't have assigned contract
+        </div>
+        <template if:true={fileData}>
+            <p>{fileData.filename}</p>
+        <lightning-button variant="brand" label="submit" title="Submit" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+        </template>
+    </lightning-card>
+</template>
