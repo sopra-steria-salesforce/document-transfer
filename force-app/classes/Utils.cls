@@ -47,9 +47,9 @@ public with sharing class Utils {
     }
 
     public static HttpResponse doRequest(String namedCredentials,String apiMethodName,String httpMethod,String body){
-        Logger.debug('body:', body);
-        Logger.debug('nameCredentials', namedCredentials);
-        Logger.debug('apiMethodName', apiMethodName);
+        Logger.debug('body:' + body);
+        Logger.debug('nameCredentials' + namedCredentials);
+        Logger.debug('apiMethodName' + apiMethodName);
         HttpRequest httpRequestServiceNowContracts = new HttpRequest();
         httpRequestServiceNowContracts.setEndpoint(namedCredentials+apiMethodName);
         httpRequestServiceNowContracts.setMethod(httpMethod);
