@@ -85,25 +85,26 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
     private static void upsertContractArchives(List<Contract_Archive__c> contractsArchives) {
 //        try {
             Boolean foundError = false;
-            Logger.info('contactsArchives' + contractsArchives);
+            Logger.info('contactsArchives', contractsArchives);
             Database.UpsertResult[] upsertResults = Database.upsert(contractsArchives, Contract_Archive__c.Fields.Sys_Id_External__c, false);
             for (Database.UpsertResult upsertResult : upsertResults) {
+                Logger.info('upsertResult', upsertResult);
                 if (!upsertResult.isSuccess()) {
                     for (Database.Error error : upsertResult.getErrors()) {
-                        Logger.error('Error: ' + error.getStatusCode(), error.getMessage());
+                        Logger.error('Error: ' + error.getStatusCode() + error.getMessage());
                     }
                     foundError = true;
                 }
             }
             if (!foundError) {
                 List<Contract_Archive__c> contractArchives = [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c WHERE Sys_Id_External__c IN :opportunityId2ExternalId.values()];
-                Logger.info('contractArchives' + contractArchives);
+                Logger.debug('contaractArcivs', contractArchives);
                 Map<String,String> externalId2contractId = new Map<String,String>();
                 for(Contract_Archive__c contractArchive : contractArchives){
                     externalId2contractId.put(contractArchive.Sys_Id_External__c, contractArchive.Id);
                 }
                 List<Opportunity> opportunities = [SELECT Id, Contract_Lookup__c FROM Opportunity WHERE Id IN :opportunityId2ExternalId.keySet()];
-                Logger.info('Opportunites: ', opportunities);
+                Logger.debug('Opportunites', opportunities);
                 for(Opportunity opp : opportunities) {
                     opp.Contract_Lookup__c = externalId2contractId.get(opportunityId2ExternalId.get(opp.Id));
                 }

@@ -16,7 +16,7 @@ public with sharing class ServiceNowUploadContracts {
 
     @AuraEnabled
     public static ResponseWrapper uploadContracts(String recordId,String filedata, Boolean contractLookup, String opportunityContractSysId, String customerName, String contractNumber) {
-        Logger.info('filedata', filedata);
+        Logger.info('filedata' + filedata);
         opportunity = ServiceNowIntegrationSelector.retrieveOpportunity(recordId);
         truncatedUsername = opportunity.Owner.Username.replace('.uat','');
         try {
@@ -40,7 +40,7 @@ public with sharing class ServiceNowUploadContracts {
         createNewContracts(customerNumber,customerName);
         OuterWrapper outerWrapper = addAttachmentToNewContracts(files,customerName,customerNumber);
         if(outerWrapper == null){
-            Logger.error('Failed to upload attachments. ', outerWrapper.result.message);
+            Logger.error('Failed to upload attachments. ' + outerWrapper.result.message);
             Logger.saveLog();
             return null;
         }
@@ -90,7 +90,7 @@ public with sharing class ServiceNowUploadContracts {
     }
 
     private static NewContractBody prepareBodyForCreateNewContracts(String customerNumber,String customerName){
-        Logger.info('customerName', customerName);
+        Logger.info('customerName' + customerName);
 
         NewContractBody requestBody = new NewContractBody(
                 opportunity.Id,
@@ -123,7 +123,7 @@ public with sharing class ServiceNowUploadContracts {
                     JSON.serialize(prepareBodyForCreateExistingContracts(customerName, customerNumber))
             );
             if (response.getStatusCode() != 200){
-                Logger.error('API call failed.', response.getBody());
+                Logger.error('API call failed.' + response.getBody()  + response.getStatusCode());
             }
         } catch (Exception e) {
             Logger.error('Exception occurred during API call', e);
@@ -160,7 +160,7 @@ public with sharing class ServiceNowUploadContracts {
             if (response.getStatusCode() == 200) {
                 return deserializeResponse(response);
             } else {
-                Logger.error('API call failed', response.getBody());
+                Logger.error('API call failed' + response.getBody() + response.getStatusCode());
                 return null;
             }
         } catch (Exception e) {
@@ -197,7 +197,7 @@ public with sharing class ServiceNowUploadContracts {
             if (response.getStatusCode() == 200){
                 return deserializeResponse(response);
             } else {
-                Logger.error('API call failed, response:', response.getBody());
+                Logger.error('API call failed, response:' + response.getBody() + response.getStatusCode());
                 return null;
             }
         } catch (Exception e) {
