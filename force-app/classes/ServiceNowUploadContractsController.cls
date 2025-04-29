@@ -43,9 +43,8 @@ public with sharing class ServiceNowUploadContractsController {
             response.message = 'Contract upload process has been initiated. You will be notified when complete.';
         } catch (Exception ex) {
             response.success = false;
-            response.message = 'Error: ' + ex.getMessage();
-            Utils.logFailure('ServiceNowUploadContractsController', 'uploadContractToServiceNow', 
-                            ex.getMessage(), 'Failed', UserInfo.getUserName(), 'Exception occurred during button click');
+            Logger.error('Exception occurred during button click', ex);
+            Logger.saveLog();
         }
         
         return response;

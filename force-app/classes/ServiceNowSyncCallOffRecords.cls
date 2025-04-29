@@ -18,7 +18,8 @@ public with sharing class ServiceNowSyncCallOffRecords {
                 upsertCallOffRecords(callOffRecords);
             }
         }catch(Exception e) {
-            Utils.logFailure('ServiceNowSyncCallOffRecords', 'syncCallOffRecords', e.getMessage(), 'Failed', UserInfo.getUserName(), 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call',  e);
+            Logger.saveLog();
         }
     }
 
@@ -65,17 +66,20 @@ public with sharing class ServiceNowSyncCallOffRecords {
     }
 
     private static void upsertCallOffRecords(List<Call_Off_Contract__c> callOffRecords) {
-        System.debug(callOffRecords);
         Boolean foundError = false;
         Database.UpsertResult[] upsertResults = Database.upsert(callOffRecords, Call_Off_Contract__c.Fields.Sys_Id_External__c, false);
+        Logger.info('upsertResults: ', upsertResults);
         for (Database.UpsertResult upsertResult : upsertResults) {
+             Logger.info('upsertResult', upsertResult);
             if (!upsertResult.isSuccess()) {
                 for (Database.Error error : upsertResult.getErrors()) {
-                    System.debug('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
+                    Logger.error('Error: ' + error.getStatusCode() + error.getMessage());
                     foundError = true;
                 }
             }
         }
+        Logger.saveLog();
+
         if(!foundError) {
             List<Call_Off_Contract__c> callOffContracts = [SELECT Id, Sys_Id_External__c FROM Call_Off_Contract__c WHERE Sys_Id_External__c IN :opportunityId2CalloffSysExternalId.values()];
             Map<String,String> externalId2contractId = new Map<String,String>();
