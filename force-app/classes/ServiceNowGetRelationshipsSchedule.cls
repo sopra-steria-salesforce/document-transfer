@@ -6,5 +6,6 @@ public with sharing class ServiceNowGetRelationshipsSchedule implements Schedula
 
     public void execute(SchedulableContext param1) {
         ServiceNowGetRelationships.assignContractsWithAccounts();
+        
     }
 }

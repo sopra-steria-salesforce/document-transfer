@@ -18,9 +18,11 @@ public with sharing class ContractArchiveTriggerService {
                 JSON.serialize(requests)
         );
         if (response.getStatusCode() == 200) {
-            System.debug('Request sent successfully.');
+            Logger.info('Request sent successfully.');
         } else {
-            System.debug('Failed to send request: ' + response.getStatusCode() + ' ' + response.getStatus());
+            Logger.error('Response body' + response.getBody());
+            Logger.error('Status code' + response.getStatusCode());
+            Logger.saveLog();
         }
     }
 
