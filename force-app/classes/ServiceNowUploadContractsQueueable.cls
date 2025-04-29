@@ -203,7 +203,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     archive.Primary_Customer__c = opportunity.AccountId;
     insert archive;
 
-    Logger.debug('new contarct arkive', archive);
+    Logger.debug('new contract archive', archive);
     Logger.saveLog();
     return archive;
   }
