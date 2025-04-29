@@ -68,8 +68,9 @@ public with sharing class ServiceNowSyncCallOffRecords {
     private static void upsertCallOffRecords(List<Call_Off_Contract__c> callOffRecords) {
         Boolean foundError = false;
         Database.UpsertResult[] upsertResults = Database.upsert(callOffRecords, Call_Off_Contract__c.Fields.Sys_Id_External__c, false);
+        Logger.info('upsertResults: ', upsertResults);
         for (Database.UpsertResult upsertResult : upsertResults) {
-            Logger.info('upserResult ', upsertResult);
+             Logger.info('upsertResult', upsertResult);
             if (!upsertResult.isSuccess()) {
                 for (Database.Error error : upsertResult.getErrors()) {
                     Logger.error('Error: ' + error.getStatusCode() + error.getMessage());

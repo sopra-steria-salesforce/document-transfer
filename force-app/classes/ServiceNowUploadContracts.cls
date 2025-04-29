@@ -123,7 +123,8 @@ public with sharing class ServiceNowUploadContracts {
                     JSON.serialize(prepareBodyForCreateExistingContracts(customerName, customerNumber))
             );
             if (response.getStatusCode() != 200){
-                Logger.error('API call failed.' + response.getBody()  + response.getStatusCode());
+                Logger.error('API call failed' + response.getStatusCode());
+                Logger.error('Response body'+ response.getBody());
             }
         } catch (Exception e) {
             Logger.error('Exception occurred during API call', e);
@@ -160,7 +161,8 @@ public with sharing class ServiceNowUploadContracts {
             if (response.getStatusCode() == 200) {
                 return deserializeResponse(response);
             } else {
-                Logger.error('API call failed' + response.getBody() + response.getStatusCode());
+                Logger.error('API call failed' + response.getStatusCode());
+                Logger.error('Response body' + response.getBody());
                 return null;
             }
         } catch (Exception e) {
@@ -197,7 +199,8 @@ public with sharing class ServiceNowUploadContracts {
             if (response.getStatusCode() == 200){
                 return deserializeResponse(response);
             } else {
-                Logger.error('API call failed, response:' + response.getBody() + response.getStatusCode());
+                Logger.error('API call failed, response' + response.getBody());
+                Logger.error('Status code' + response.getStatusCode());
                 return null;
             }
         } catch (Exception e) {

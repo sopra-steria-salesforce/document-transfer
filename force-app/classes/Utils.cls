@@ -62,7 +62,8 @@ public with sharing class Utils {
         HttpResponse response = new HttpResponse();
         try{
             response = httpServiceNowContracts.send(httpRequestServiceNowContracts);
-            Logger.debug('response' + response + response.getBody());
+            Logger.debug('Response status' + response.getStatusCode());
+            Logger.debug('Response status' + response.getBody());
         }catch(Exception e){
             Logger.error('Callout errror', e);
         }

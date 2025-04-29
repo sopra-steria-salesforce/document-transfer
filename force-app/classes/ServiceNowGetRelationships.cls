@@ -13,7 +13,8 @@ public with sharing class ServiceNowGetRelationships {
                 createJunctions(outerWrapper);
                 upsert accountContractArchiveJunctions Account_Contract_Archive_Junction_Sys_Id__c;
             } else {
-                Logger.error('Failed to retrieve relationships between Accounts and Contract Archives. ' + response.getBody() + response.getStatusCode());
+                Logger.error('Status code' + response.getStatusCode());
+                Logger.error('Failed to retrieve relationships between Accounts and Contract Archives. ' + response.getBody());
             }
         } catch (Exception e) {
             Logger.error('Exception occurred during API call.', e);

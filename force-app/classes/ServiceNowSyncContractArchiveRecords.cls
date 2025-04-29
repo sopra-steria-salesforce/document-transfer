@@ -85,8 +85,9 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
     private static void upsertContractArchives(List<Contract_Archive__c> contractsArchives) {
 //        try {
             Boolean foundError = false;
-            Logger.info('contractsArchives', contractsArchives);
+            Logger.info('contractArchives', contractsArchives);
             Database.UpsertResult[] upsertResults = Database.upsert(contractsArchives, Contract_Archive__c.Fields.Sys_Id_External__c, false);
+            Logger.info('upsertResults: ', upsertResults);
             for (Database.UpsertResult upsertResult : upsertResults) {
                 Logger.info('upsertResult', upsertResult);
                 if (!upsertResult.isSuccess()) {
@@ -98,7 +99,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
             }
             if (!foundError) {
                 List<Contract_Archive__c> contractArchives = [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c WHERE Sys_Id_External__c IN :opportunityId2ExternalId.values()];
-                Logger.debug('contaractArcivs', contractArchives);
+                Logger.debug('ContractArchives', contractArchives);
                 Map<String,String> externalId2contractId = new Map<String,String>();
                 for(Contract_Archive__c contractArchive : contractArchives){
                     externalId2contractId.put(contractArchive.Sys_Id_External__c, contractArchive.Id);

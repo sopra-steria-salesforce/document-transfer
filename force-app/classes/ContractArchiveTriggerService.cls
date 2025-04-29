@@ -20,7 +20,8 @@ public with sharing class ContractArchiveTriggerService {
         if (response.getStatusCode() == 200) {
             Logger.info('Request sent successfully.');
         } else {
-            Logger.error('response' + response.getBody() + response.getStatusCode());
+            Logger.error('Response body' + response.getBody());
+            Logger.error('Status code' + response.getStatusCode());
             Logger.saveLog();
         }
     }
