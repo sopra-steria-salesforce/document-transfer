@@ -90,7 +90,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
             for (Database.UpsertResult upsertResult : upsertResults) {
                 if (!upsertResult.isSuccess()) {
                     for (Database.Error error : upsertResult.getErrors()) {
-                        Logger.error('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
+                        Logger.error('Error: ' + error.getStatusCode(), error.getMessage());
                     }
                     foundError = true;
                 }
@@ -103,8 +103,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
                     externalId2contractId.put(contractArchive.Sys_Id_External__c, contractArchive.Id);
                 }
                 List<Opportunity> opportunities = [SELECT Id, Contract_Lookup__c FROM Opportunity WHERE Id IN :opportunityId2ExternalId.keySet()];
-                Logger.info('opportunities' + opportunities);
-                Logger.info('',opportunities);
+                Logger.info('Opportunites: ', opportunities);
                 for(Opportunity opp : opportunities) {
                     opp.Contract_Lookup__c = externalId2contractId.get(opportunityId2ExternalId.get(opp.Id));
                 }

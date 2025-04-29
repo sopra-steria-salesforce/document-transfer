@@ -47,8 +47,9 @@ public with sharing class Utils {
     }
 
     public static HttpResponse doRequest(String namedCredentials,String apiMethodName,String httpMethod,String body){
-        Logger.debug('body: ' + body);
-        Logger.debug('apiMethodName' + namedCredentials + apiMethodName);
+        Logger.debug('body:', body);
+        Logger.debug('nameCredentials', namedCredentials);
+        Logger.debug('apiMethodName', apiMethodName);
         HttpRequest httpRequestServiceNowContracts = new HttpRequest();
         httpRequestServiceNowContracts.setEndpoint(namedCredentials+apiMethodName);
         httpRequestServiceNowContracts.setMethod(httpMethod);
@@ -61,8 +62,7 @@ public with sharing class Utils {
         HttpResponse response = new HttpResponse();
         try{
             response = httpServiceNowContracts.send(httpRequestServiceNowContracts);
-            Logger.debug('response: ' + response);
-            Logger.debug('response.getBody(): ' + response.getBody());
+            Logger.debug('response' + response, response.getBody());
         }catch(Exception e){
             Logger.error('Callout errror', e);
         }
