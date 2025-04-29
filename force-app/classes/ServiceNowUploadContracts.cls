@@ -17,6 +17,7 @@ public with sharing class ServiceNowUploadContracts {
     @AuraEnabled
     public static ResponseWrapper uploadContracts(String recordId,String filedata, Boolean contractLookup, String opportunityContractSysId, String customerName, String contractNumber) {
         Logger.info('filedata' + filedata);
+        Logger.info('', filedata);
         opportunity = ServiceNowIntegrationSelector.retrieveOpportunity(recordId);
         truncatedUsername = opportunity.Owner.Username.replace('.uat','');
         try {
@@ -29,7 +30,7 @@ public with sharing class ServiceNowUploadContracts {
                 }
             }
         }catch (Exception ex){
-            Logger.error('ServiceNowUploadContracts' + 'uploadContracts' + ex.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call. User: ' + UserInfo.getUserName());
             Logger.error(ex.getMessage() + ' -> ' + ex.getStackTraceString());
             Logger.saveLog();
             throw new AuraHandledException(ex.getMessage());
@@ -41,7 +42,7 @@ public with sharing class ServiceNowUploadContracts {
         createNewContracts(customerNumber,customerName);
         OuterWrapper outerWrapper = addAttachmentToNewContracts(files,customerName,customerNumber);
         if(outerWrapper == null){
-            Logger.error('ServiceNowUploadContracts' + 'uploadNewContract' + 'Failed to upload attachments' + 'Failed' + UserInfo.getUserName() + 'API call failed' + outerWrapper.result.message);
+            Logger.error('Failed to upload attachments. User: ' + UserInfo.getUserName() + 'API call failed' + outerWrapper.result.message);
             Logger.saveLog();
             return null;
         }
@@ -92,6 +93,7 @@ public with sharing class ServiceNowUploadContracts {
 
     private static NewContractBody prepareBodyForCreateNewContracts(String customerNumber,String customerName){
         Logger.info('customerName' + customerName);
+        Logger.info('', customerName);
 
         NewContractBody requestBody = new NewContractBody(
                 opportunity.Id,
@@ -124,11 +126,10 @@ public with sharing class ServiceNowUploadContracts {
                     JSON.serialize(prepareBodyForCreateExistingContracts(customerName, customerNumber))
             );
             if (response.getStatusCode() != 200){
-                Logger.error('ServiceNowUploadContracts' + 'createExistingContracts' + response.getBody() + 'Failed' + UserInfo.getUserName() + 'API call failed');
-                Logger.saveLog();
+                Logger.error('API call failed.  User: ' + UserInfo.getUserName() + 'respons: ' + response.getBody());
             }
         } catch (Exception e) {
-            Logger.error('ServiceNowUploadContracts' + 'createExistingContracts' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call' + e.getMessage() + e + 'User: ' + UserInfo.getUserName() + );
             Logger.saveLog();
         }
     }
@@ -146,7 +147,7 @@ public with sharing class ServiceNowUploadContracts {
                 assignContractSysId(outerWrapper);
             }
         } catch (Exception e) {
-            Logger.error('ServiceNowUploadContracts' + 'createNewContracts' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call ' + e.getMessage() + e + 'User: ' + UserInfo.getUserName());
             Logger.saveLog();
         }
     }
@@ -162,12 +163,11 @@ public with sharing class ServiceNowUploadContracts {
             if (response.getStatusCode() == 200) {
                 return deserializeResponse(response);
             } else {
-                Logger.error('ServiceNowUploadContracts' + 'addAttachmentToNewContracts' + response.getBody() + 'Failed' + UserInfo.getUserName() + 'API call failed');
-                Logger.saveLog();
+                Logger.error('API call failed' + response.getBody() + 'User: ' + UserInfo.getUserName());
                 return null;
             }
         } catch (Exception e) {
-            Logger.error('ServiceNowUploadContracts' + 'addAttachmentToNewContracts' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call ' + e.getMessage() + e + 'User: ' + UserInfo.getUserName());
             Logger.saveLog();
             return null;
         }
@@ -200,11 +200,11 @@ public with sharing class ServiceNowUploadContracts {
             if (response.getStatusCode() == 200){
                 return deserializeResponse(response);
             } else {
-                Utils.logFailure('ServiceNowUploadContracts', 'addAttachmentToExistingContracts', response.getBody(), 'Failed', UserInfo.getUserName(), 'API call failed');
+                Logger.error('API call failed, response: ' + response.getBody() + 'User: ' + UserInfo.getUserName());
                 return null;
             }
         } catch (Exception e) {
-            Logger.error('ServiceNowUploadContracts' + 'addAttachmentToExistingContracts' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call ' + e.getMessage() + e + 'User: ' + UserInfo.getUserName());
             Logger.saveLog();
             return null;
         }

@@ -13,12 +13,12 @@ public with sharing class ServiceNowGetRelationships {
                 createJunctions(outerWrapper);
                 upsert accountContractArchiveJunctions Account_Contract_Archive_Junction_Sys_Id__c;
             } else {
-                Logger.error('ServiceNowGetRelationships' + 'assignContractsWithAccounts' + response.getBody() + 'Failed' + UserInfo.getUserName() + 'Failed to retrieve relationships between Accounts and Contract Archives');
+                Logger.error('Failed to retrieve relationships between Accounts and Contract Archives. User: ' + UserInfo.getUserName() + 'response: ' + response.getBody());
                 Logger.saveLog();
 
             }
         } catch (Exception e) {
-            Logger.error('ServiceNowGetRelationships' + 'assignContractsWithAccounts' + e.getMessage() + 'Failed' +  UserInfo.getUserName() + 'Exception occurred during API call');
+            Logger.error('Exception occurred during API call. User: ' + UserInfo.getUserName() + 'Message: ' + e.getMessage() + e);
             Logger.saveLog();
         }
     }
@@ -32,7 +32,7 @@ public with sharing class ServiceNowGetRelationships {
                 }
             }
         } catch (Exception e) {
-            Logger.error('ServiceNowGetRelationships' + 'createJunctions' + e.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during junction creation');
+            Logger.error('Exception occurred during junction creation. User: ' + UserInfo.getUserName() + '. Message: ' + e.getMessage() + e);
             Logger.saveLog();
         }
     }

@@ -72,11 +72,11 @@ public with sharing class ServiceNowSyncCallOffRecords {
             if (!upsertResult.isSuccess()) {
                 for (Database.Error error : upsertResult.getErrors()) {
                     Logger.error('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
-                    Logger.saveLog();
                     foundError = true;
                 }
             }
         }
+        Logger.saveLog();
         if(!foundError) {
             List<Call_Off_Contract__c> callOffContracts = [SELECT Id, Sys_Id_External__c FROM Call_Off_Contract__c WHERE Sys_Id_External__c IN :opportunityId2CalloffSysExternalId.values()];
             Map<String,String> externalId2contractId = new Map<String,String>();

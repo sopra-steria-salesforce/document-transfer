@@ -44,8 +44,7 @@ public with sharing class ServiceNowUploadContractsController {
         } catch (Exception ex) {
             response.success = false;
             response.message = 'Error: ' + ex.getMessage();
-            Logger.error('ServiceNowUploadContractsController' + 'uploadContractToServiceNow' + 
-                            ex.getMessage() + 'Failed' + UserInfo.getUserName() + 'Exception occurred during button click');
+            Logger.error('Exception occurred during button click ' + ex.getMessage() + 'User: ' + UserInfo.getUserName());
             Logger.saveLog();
         }
         

@@ -91,7 +91,6 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
                 if (!upsertResult.isSuccess()) {
                     for (Database.Error error : upsertResult.getErrors()) {
                         Logger.error('Error: ' + error.getStatusCode() + ' - ' + error.getMessage());
-                        Logger.saveLog();
                     }
                     foundError = true;
                 }
@@ -105,6 +104,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
                 }
                 List<Opportunity> opportunities = [SELECT Id, Contract_Lookup__c FROM Opportunity WHERE Id IN :opportunityId2ExternalId.keySet()];
                 Logger.info('opportunities' + opportunities);
+                Logger.info('',opportunities);
                 for(Opportunity opp : opportunities) {
                     opp.Contract_Lookup__c = externalId2contractId.get(opportunityId2ExternalId.get(opp.Id));
                 }
@@ -112,6 +112,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
                 settings.LastContractsSynchronization__c = Datetime.now().addHours(-2);
                 update settings;
             }
+            Logger.saveLog();
 //        } catch (Exception e) {
 //            Utils.logFailure('ServiceNowSyncContractArchiveRecords', 'upsertContractArchives', e.getMessage(), 'Failed', UserInfo.getUserName(), 'Exception occurred during upserting Contract Archive records');
 //        }
