@@ -21,9 +21,10 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   public ServiceNowUploadContractsQueueable(Opportunity opportunity) {
     this.opportunity = opportunity;
   }
+
   public void execute(QueueableContext param1) {
   
-    System.debug(opportunity);
+    Logger.info('oportunity: ' + opportunity);
     isContractUploadProcessStarted = true;
     truncatedUsername = [
         SELECT Id, Owner.Username
@@ -48,9 +49,8 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       }
     } catch (Exception ex) {
       // Log to Application_Log__c using the existing method
-      Utils.logFailure('ServiceNowUploadContractsQueueable', 'uploadContracts', ex.getMessage(),'Failed',UserInfo.getUserName(),'Exception occurred during contract upload. Opportunity Id: ' +opportunity.Id + '\n' +ex.getStackTraceString()
-      );
-
+      Logger.error('Exception occurred during contract upload. Opportunity Id: ', opportunity.Id,  ex);
+      Logger.saveLog();
       // Throw appropriate exception based on context
       if (System.isBatch() || System.isQueueable() || System.isFuture()) {
         throw new ContractUploadException(ex.getMessage());
@@ -61,7 +61,9 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   }
 
   private static void uploadNewContract(Opportunity opportunity) {
+    Logger.info('Opportunity: ' + opportunity);
     OuterWrapper outerWrapper = createNewContracts(opportunity);
+    Logger.info('outerWrapper new contact: ' + outerWrapper);
     Contract_Archive__c archive = createNewContractArchive(opportunity);
     Account_Contract_Archive_Junction__c junction = createJunction(
       archive.Id,
@@ -69,9 +71,11 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       opportunity
     );
     updateOpportunity(archive.Id, junction.Id, null, opportunity, outerWrapper);
+    Logger.saveLog();
   }
 
   private static void uploadExistingContract(Opportunity opportunity) {
+    Logger.info('Opportunity' + opportunity);
     OuterWrapper outerWrapper = createExistingContracts(opportunity);
     Call_Off_Contract__c callOff = createCallOff(opportunity, outerWrapper);
     updateOpportunity(
@@ -81,6 +85,9 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       opportunity,
       outerWrapper
     );
+    Logger.debug('calloff' + callOff);
+    Logger.debug('outerWrapper existing contarct: ' + outerWrapper);
+    Logger.saveLog();
   }
 
   private static NewContractBody prepareBodyForCreateNewContracts(
@@ -109,6 +116,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       currentOpportunity.Contract_Lookup__r.Sys_Id_External__c,
       String.isNotBlank(opportunity.Sub_Area__c) ? opportunity.Sub_Area__c : ''
     );
+    Logger.debug('requestBody:' + requestBody);
     return requestBody;
   }
 
@@ -120,20 +128,17 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Utils.METHOD_PATCH,
         JSON.serialize(prepareBodyForCreateExistingContracts(opportunity))
       );
+      Logger.debug('response: ' + response);
+
       if (response.getStatusCode() == 200) {
         OuterWrapper outerWrapper = deserializeResponse(response);
         assignValuesFromRequest(outerWrapper);
+        Logger.debug('otherWrapper' + outerWrapper);
         return outerWrapper;
       }
     } catch (Exception e) {
-      Utils.logFailure(
-        'ServiceNowUploadContracts',
-        'createExistingContracts',
-        e.getMessage(),
-        'Failed',
-        UserInfo.getUserName(),
-        'Exception occurred during API call'
-      );
+      Logger.error('Exception occurred during API call', e);
+      Logger.saveLog();
     }
     return null;
   }
@@ -146,20 +151,16 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Utils.METHOD_POST,
         JSON.serialize(prepareBodyForCreateNewContracts(opportunity))
       );
+      Logger.debug('Response: ' + response);
       if (response.getStatusCode() == 200) {
         OuterWrapper outerWrapper = deserializeResponse(response);
         assignContractSysId(outerWrapper);
+        Logger.debug('outerWraper: ' + outerWrapper);
         return outerWrapper;
       }
     } catch (Exception e) {
-      Utils.logFailure(
-        'ServiceNowUploadContracts',
-        'createNewContracts',
-        e.getMessage(),
-        'Failed',
-        UserInfo.getUserName(),
-        'Exception occurred during API call'
-      );
+      Logger.error('Exception occurred during API call' + e);
+      Logger.saveLog();
     }
     return null;
   }
@@ -188,6 +189,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   private static Contract_Archive__c createNewContractArchive(
     Opportunity opportunity
   ) {
+    Logger.info('opportunity: ' + opportunity);
     Contract_Archive__c archive = new Contract_Archive__c();
     User currentUser = [
       SELECT Id, Country
@@ -200,6 +202,9 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     archive.Internal_Contract_Number__c = internal_contract_number;
     archive.Primary_Customer__c = opportunity.AccountId;
     insert archive;
+
+    Logger.debug('new contarct arkive' + archive);
+    Logger.saveLog();
     return archive;
   }
 
@@ -214,6 +219,8 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     junction.Internal_Contract_Number__c = internalContractNumber;
     junction.Account_Contract_Archive_Junction_Sys_Id__c = relationship_sys_id;
     insert junction;
+    Logger.debug('created junction: ' + junction);
+    Logger.saveLog();
     return junction;
   }
 
@@ -249,6 +256,9 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     opportunity.UploadTime__c = Datetime.now();
     opportunity.IsContractSent__c = true;
     opportunity.ContractServiceNowUrl__c = url;
+
+    Logger.debug('updated opportunity' + opportunity);
+    Logger.saveLog();
     update opportunity;
   }
 
