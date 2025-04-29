@@ -85,7 +85,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
     private static void upsertContractArchives(List<Contract_Archive__c> contractsArchives) {
 //        try {
             Boolean foundError = false;
-            Logger.info('contactsArchives', contractsArchives);
+            Logger.info('contractsArchives', contractsArchives);
             Database.UpsertResult[] upsertResults = Database.upsert(contractsArchives, Contract_Archive__c.Fields.Sys_Id_External__c, false);
             for (Database.UpsertResult upsertResult : upsertResults) {
                 Logger.info('upsertResult', upsertResult);
