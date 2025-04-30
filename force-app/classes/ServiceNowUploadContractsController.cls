@@ -12,12 +12,14 @@ public with sharing class ServiceNowUploadContractsController {
     @AuraEnabled
     public static ResponseWrapper uploadContractToServiceNow(Id opportunityId) {
         ResponseWrapper response = new ResponseWrapper();
+        Logger.debug('OpportunityId' + opportunityId);
         
         try {
             // Check if a process is already running
             if (ServiceNowUploadContractsQueueable.isContractUploadProcessStarted) {
                 response.success = false;
                 response.message = 'A contract upload process is already in progress. Please wait for it to complete.';
+                Logger.debug('Response from uploadContractToServiceNow' + response);
                 return response;
             }
             
@@ -44,9 +46,10 @@ public with sharing class ServiceNowUploadContractsController {
         } catch (Exception ex) {
             response.success = false;
             Logger.error('Exception occurred during button click', ex);
-            Logger.saveLog();
+            
         }
-        
+        Logger.debug('Response from uploadContractToServiceNow' + response);
+        Logger.saveLog();
         return response;
     }
     

@@ -5,10 +5,6 @@
 	"editor.formatOnSave": true,
 	"editor.guides.bracketPairs": "active",
 	"eslint.nodePath": "./node_modules",
-	"files.exclude": {
-		"**/*.cls-meta.xml": true,
-		"**/*.trigger-meta.xml": true
-	},
 	"editor.detectIndentation": true,
 	"editor.insertSpaces": false,
 	"editor.tabSize": 4,
