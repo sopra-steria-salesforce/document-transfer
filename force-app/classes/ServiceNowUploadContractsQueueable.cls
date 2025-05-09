@@ -139,6 +139,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       }
     } catch (Exception e) {
       Logger.error('Exception occurred during API call', e);
+      Logger.error('Message', e.getMessage());
       Logger.saveLog();
     }
     return null;
