@@ -18,10 +18,10 @@ public with sharing class ContractArchiveTriggerService {
                 JSON.serialize(requests)
         );
         if (response.getStatusCode() == 200) {
-            Logger.info('Request sent successfully.');
+            Logger.info('Request sent successfully.').addTag('Contract archive trigger');
         } else {
-            Logger.error('Response body' + response.getBody());
-            Logger.error('Status code' + response.getStatusCode());
+            Logger.error('Response body' + response.getBody()).addTag('Contract archive trigger');
+            Logger.error('Status code' + response.getStatusCode()).addTag('Contract archive trigger');
             Logger.saveLog();
         }
     }

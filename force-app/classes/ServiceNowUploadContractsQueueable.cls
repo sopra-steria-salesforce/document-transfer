@@ -24,7 +24,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
 
   public void execute(QueueableContext param1) {
   
-    Logger.info('opportunity', opportunity);
+    Logger.info('opportunity', opportunity).addTag('Upload contracts queueable');
     isContractUploadProcessStarted = true;
     truncatedUsername = [
         SELECT Id, Owner.Username
@@ -49,7 +49,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       }
     } catch (Exception ex) {
       // Log to Application_Log__c using the existing method
-      Logger.error('Exception occurred during contract upload.', opportunity.Id,  ex);
+      Logger.error('Exception occurred during contract upload.', opportunity.Id,  ex).addTag('Upload contracts queueable');
       Logger.saveLog();
       // Throw appropriate exception based on context
       if (System.isBatch() || System.isQueueable() || System.isFuture()) {
@@ -61,9 +61,9 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   }
 
   private static void uploadNewContract(Opportunity opportunity) {
-    Logger.info('Opportunity', opportunity);
+    Logger.info('Opportunity', opportunity).addTag('Upload contracts queueable');
     OuterWrapper outerWrapper = createNewContracts(opportunity);
-    Logger.info('outerWrapper new contact ' + outerWrapper);
+    Logger.info('outerWrapper new contact ' + outerWrapper).addTag('Upload contracts queueable');
     Contract_Archive__c archive = createNewContractArchive(opportunity);
     Account_Contract_Archive_Junction__c junction = createJunction(
       archive.Id,
@@ -75,7 +75,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   }
 
   private static void uploadExistingContract(Opportunity opportunity) {
-    Logger.info('Opportunity', opportunity);
+    Logger.info('Opportunity', opportunity).addTag('Upload contracts queueable');
     OuterWrapper outerWrapper = createExistingContracts(opportunity);
     Call_Off_Contract__c callOff = createCallOff(opportunity, outerWrapper);
     updateOpportunity(
@@ -85,8 +85,8 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       opportunity,
       outerWrapper
     );
-    Logger.debug('calloff', callOff);
-    Logger.debug('outerWrapper existing contarct ' + outerWrapper);
+    Logger.debug('calloff', callOff).addTag('Upload contracts queueable');
+    Logger.debug('outerWrapper existing contarct ' + outerWrapper).addTag('Upload contracts queueable');
     Logger.saveLog();
   }
 
@@ -116,7 +116,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       currentOpportunity.Contract_Lookup__r.Sys_Id_External__c,
       String.isNotBlank(opportunity.Sub_Area__c) ? opportunity.Sub_Area__c : ''
     );
-    Logger.debug('requestBody' + requestBody);
+    Logger.debug('requestBody' + requestBody).addTag('Upload contracts queueable');
     return requestBody;
   }
 
@@ -128,16 +128,16 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Utils.METHOD_PATCH,
         JSON.serialize(prepareBodyForCreateExistingContracts(opportunity))
       );
-      Logger.debug('response' + response);
+      Logger.debug('response' + response).addTag('Upload contracts queueable');
 
       if (response.getStatusCode() == 200) {
         OuterWrapper outerWrapper = deserializeResponse(response);
         assignValuesFromRequest(outerWrapper);
-        Logger.debug('otherWrapper' + outerWrapper);
+        Logger.debug('otherWrapper' + outerWrapper).addTag('Upload contracts queueable');
         return outerWrapper;
       }
     } catch (Exception e) {
-      Logger.error('Exception occurred during API call', e);
+      Logger.error('Exception occurred during API call', e).addTag('Upload contracts queueable');
       Logger.saveLog();
     }
     return null;
@@ -151,15 +151,15 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Utils.METHOD_POST,
         JSON.serialize(prepareBodyForCreateNewContracts(opportunity))
       );
-      Logger.debug('Response' + response);
+      Logger.debug('Response' + response).addTag('Upload contracts queueable');
       if (response.getStatusCode() == 200) {
         OuterWrapper outerWrapper = deserializeResponse(response);
         assignContractSysId(outerWrapper);
-        Logger.debug('outerWraper: ' + outerWrapper);
+        Logger.debug('outerWraper: ' + outerWrapper).addTag('Upload contracts queueable');
         return outerWrapper;
       }
     } catch (Exception e) {
-      Logger.error('Exception occurred during API call' + e);
+      Logger.error('Exception occurred during API call' + e).addTag('Upload contracts queueable');
       Logger.saveLog();
     }
     return null;
@@ -189,7 +189,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   private static Contract_Archive__c createNewContractArchive(
     Opportunity opportunity
   ) {
-    Logger.info('opportunity', opportunity);
+    Logger.info('opportunity', opportunity).addTag('Upload contracts queueable');
     Contract_Archive__c archive = new Contract_Archive__c();
     User currentUser = [
       SELECT Id, Country
@@ -203,7 +203,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     archive.Primary_Customer__c = opportunity.AccountId;
     insert archive;
 
-    Logger.debug('new contract archive', archive);
+    Logger.debug('new contract archive', archive).addTag('Upload contracts queueable');
     Logger.saveLog();
     return archive;
   }
@@ -219,7 +219,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     junction.Internal_Contract_Number__c = internalContractNumber;
     junction.Account_Contract_Archive_Junction_Sys_Id__c = relationship_sys_id;
     insert junction;
-    Logger.debug('created junction', junction);
+    Logger.debug('created junction', junction).addTag('Upload contracts queueable');
     Logger.saveLog();
     return junction;
   }
@@ -257,7 +257,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     opportunity.IsContractSent__c = true;
     opportunity.ContractServiceNowUrl__c = url;
 
-    Logger.debug('updated opportunity', opportunity);
+    Logger.debug('updated opportunity', opportunity).addTag('Upload contracts queueable');
     Logger.saveLog();
     update opportunity;
   }
