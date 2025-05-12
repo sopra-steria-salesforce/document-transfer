@@ -35,21 +35,15 @@ export default class fileUploadMulti extends LightningElement {
         this.logger.info('Test logger in fileUploadMulti');
         const self = this;
         const callbackFunction = function(response) {
-            console.log('callbackFunction', response);
             this.logger.info('response', response);
         }
         subscribe(this.channelName, -1, callbackFunction).then(response => {
-            console.log('Subscribed to change events', response);
             this.logger.info('Subscribed to change events', response);
         });
         self.refreshMyData();
         if(this.opportunity.data){
             this.showConditionalSection = this.opportunity.data.fields.StageName.value === '5 - Awarded' && (this.opportunity.data.fields.ContractServiceNowUrl__c.value === null || this.opportunity.data.fields.ContractServiceNowUrl__c.value === undefined || this.opportunity.data.fields.ContractServiceNowUrl__c.value === '');
             this.navisionCheck = ((this.opportunity.data.fields.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark') || (this.opportunity.data.fields.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden') || (this.opportunity.data.fields.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway')) || this.opportunity.data.fields.Navision_Account_in_Owners_Country__c.value === true;
-            console.log(this.opportunity.data.fields.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway');
-            console.log(this.opportunity.data.fields.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden');
-            console.log(this.opportunity.data.fields.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark');
-            console.log(this.opportunity.data.fields.Navision_Account_in_Owners_Country__c.value === true);
             this.logger.info('opportunity', this.opportunity.data);
             this.logger.saveLog();
         }
@@ -63,8 +57,7 @@ export default class fileUploadMulti extends LightningElement {
         refreshApex(this.opportunity).then(() => {
             if(this.opportunity.data){
                 this.showConditionalSection = this.opportunity.data.fields.StageName.value === '5 - Awarded' && (this.opportunity.data.fields.ContractServiceNowUrl__c.value === null || this.opportunity.data.fields.ContractServiceNowUrl__c.value === undefined || this.opportunity.data.fields.ContractServiceNowUrl__c.value === '');
-                console.log('this.showConditionalSection');
-                console.log(this.showConditionalSection);
+                this.logger.info('showConditionalSection', this.showConditionalSection);
                 
             }
         });
@@ -81,19 +74,15 @@ export default class fileUploadMulti extends LightningElement {
                     result.data.fields.ContractServiceNowUrl__c.value === '');
             this.contractServiceNowUrl = result.data.fields.ContractServiceNowUrl__c.value;
             this.navisionCheck = ((this.opportunity.data.fields.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark') || (this.opportunity.data.fields.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden') || (this.opportunity.data.fields.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway')) || this.opportunity.data.fields.Navision_Account_in_Owners_Country__c.value === true;
-            console.log(this.opportunity.data.fields.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c.value === 'Norway');
-            console.log(this.opportunity.data.fields.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c.value === 'Sweden');
-            console.log(this.opportunity.data.fields.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c.value === 'Denmark');
         }
     }
 
 refresh(){
     refreshApex(this.opportunity).then(() => {
-        console.log('refreshApex done');
+        this.logger.info('refreshApex(this.opportunity)', this.opportunity);
     });
 }
     get showConditionalSection() {
-    console.log(this.opportunity.data);
     this.logger.info('opportunity', this.opportunity.data);
     this.logger.info('ContarctServiceNowUrl__c.value', this.opportunity.data.fields.ContractServiceNowUrl__c.value);
     this.logger.saveLog();
