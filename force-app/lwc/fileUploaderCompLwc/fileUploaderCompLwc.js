@@ -5,11 +5,11 @@ import CONTRACT_LOOKUP from "@salesforce/schema/Opportunity.Contract_Lookup__c";
 import CONNECTED_TO_EXISTING_CONTRACT from "@salesforce/schema/Opportunity.ConnectedToExistingContract__c";
 import uploadContract from '@salesforce/apex/ServiceNowUploadContracts.uploadContracts'
 import {refreshApex} from "@salesforce/apex";
-import {getLogger} from 'c/logger';
+import {createLogger} from 'c/logger';
 const FIELDS = [CONTRACT_LOOKUP,CONNECTED_TO_EXISTING_CONTRACT];
 
 export default class FileUploaderCompLwc extends LightningElement {
-    logger = getLogger();
+    logger = logger;
     fields = FIELDS;
     @track validateUpload = false;
     contractLookupField = CONTRACT_LOOKUP;
