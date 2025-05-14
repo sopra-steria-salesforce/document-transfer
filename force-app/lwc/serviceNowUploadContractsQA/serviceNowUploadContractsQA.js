@@ -3,10 +3,10 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import uploadContractToServiceNow from '@salesforce/apex/ServiceNowUploadContractsController.uploadContractToServiceNow';
 import { subscribe, unsubscribe, onError } from 'lightning/empApi';
-import {getLogger} from 'c/logger';
+import {createLogger} from 'c/logger';
 
 export default class ServiceNowUploadContractsQA extends LightningElement {
-    logger = getLogger();
+    logger = logger;
     @api recordId; // The Opportunity Id
     isLoading = false;
     channelName = '/event/Refresh_Custom_Components__e';

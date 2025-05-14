@@ -9,3 +9,6 @@
 # buggy metadata
 **/AppSwitcher.appMenu*
 **/navigationMenus/*
+**/jsconfig.json
+
+**/.eslintrc.json

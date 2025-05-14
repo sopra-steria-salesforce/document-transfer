@@ -12,11 +12,11 @@ import STAGE_NAME from '@salesforce/schema/Opportunity.StageName';
 import {onError, subscribe, unsubscribe} from "lightning/empApi";
 import { RefreshEvent } from 'lightning/refresh';
 import {refreshApex} from "@salesforce/apex";
-import {getLogger} from 'c/logger';
+import {createLogger} from 'c/logger';
 const FIELDS = [IS_CONTRACT_UPLOADED,CONTRACT_SERVICE_NOW_URL,CONTRACT_CATEGORY,STAGE_NAME,NAVISION_SE,NAVISION_DK,NAVISION_NO,OPPORTUNITY_OWNER_COUNTRY,NAVISION_ACCOUNT];
 
 export default class fileUploadMulti extends LightningElement {
-    logger = getLogger();
+    logger = logger;
     fields = FIELDS;
     @api recordId;
     @track filesData = [];
@@ -30,8 +30,9 @@ export default class fileUploadMulti extends LightningElement {
     subscription = {}; // holds subscription, used for unsubscribe
 
 
-    connectedCallback() {
+    async connectedCallback() {
       //  this.showSpinner = true;
+        this.logger = await createLogger();
         this.logger.info('Test logger in fileUploadMulti');
         const self = this;
         const callbackFunction = function(response) {
