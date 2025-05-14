@@ -7,17 +7,17 @@ public with sharing class ServiceNowGetRelationships {
         try {
             HttpResponse response = Utils.doRequest(Utils.NAMED_CREDENTIAL_SERVICE_NOW, Utils.API_GET_ALL_CONTRACTS_AND_CUSTOMERS_M2M, Utils.METHOD_GET, null);
             if (response.getStatusCode() == 200) {
-                Logger.info(response.getBody());
+                Logger.info(response.getBody()).addTag('Get relationships');
                 OuterWrapper outerWrapper = (OuterWrapper) System.JSON.deserialize(response.getBody(), OuterWrapper.class);
                 createFilterMaps();
                 createJunctions(outerWrapper);
                 upsert accountContractArchiveJunctions Account_Contract_Archive_Junction_Sys_Id__c;
             } else {
-                Logger.error('Status code' + response.getStatusCode());
-                Logger.error('Failed to retrieve relationships between Accounts and Contract Archives. ' + response.getBody());
+                Logger.error('Status code' + response.getStatusCode()).addTag('Get relationships');
+                Logger.error('Failed to retrieve relationships between Accounts and Contract Archives. ' + response.getBody()).addTag('Get relationships');
             }
         } catch (Exception e) {
-            Logger.error('Exception occurred during API call.', e);
+            Logger.error('Exception occurred during API call.', e).addTag('Get relationships');
             Logger.saveLog();
         }
     }
@@ -31,7 +31,7 @@ public with sharing class ServiceNowGetRelationships {
                 }
             }
         } catch (Exception e) {
-            Logger.error('Exception occurred during junction creation.', e);
+            Logger.error('Exception occurred during junction creation.', e).addTag('Get relationships');
             Logger.saveLog();
         }
     }
