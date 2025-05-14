@@ -38,6 +38,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         opportunity.Contract_Category__c ==
         'New contract (not connected to framework/capacity agreement)'
       ) {
+        Logger.debug('Opportunity with new c ontract', opportunity);
         uploadNewContract(opportunity);
       } else if (
         opportunity.Contract_Category__c ==
@@ -144,6 +145,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   }
 
   private static OuterWrapper createNewContracts(Opportunity opportunity) {
+    Logger.info('Opportunity', opportunity);
     try {
       HttpResponse response = Utils.doRequest(
         Utils.NAMED_CREDENTIAL_SERVICE_NOW,
@@ -162,6 +164,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       Logger.error('Exception occurred during API call' + e).addTag('Upload contracts queueable');
       Logger.saveLog();
     }
+    Logger.saveLog();
     return null;
   }
 

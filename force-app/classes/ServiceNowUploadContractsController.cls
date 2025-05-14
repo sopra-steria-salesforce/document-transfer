@@ -12,6 +12,7 @@ public with sharing class ServiceNowUploadContractsController {
     @AuraEnabled
     public static ResponseWrapper uploadContractToServiceNow(Id opportunityId) {
         ResponseWrapper response = new ResponseWrapper();
+        Logger.debug('OpportunityId', opportunityId);
         
         try {
             // Check if a process is already running
@@ -50,7 +51,8 @@ public with sharing class ServiceNowUploadContractsController {
         } finally {
             Logger.saveLog();
         }
-        
+        Logger.debug('Response from uploadContractToServiceNow' + response);
+        Logger.saveLog();
         return response;
     }
     

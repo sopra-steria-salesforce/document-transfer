@@ -5,9 +5,11 @@ import CONTRACT_LOOKUP from "@salesforce/schema/Opportunity.Contract_Lookup__c";
 import CONNECTED_TO_EXISTING_CONTRACT from "@salesforce/schema/Opportunity.ConnectedToExistingContract__c";
 import uploadContract from '@salesforce/apex/ServiceNowUploadContracts.uploadContracts'
 import {refreshApex} from "@salesforce/apex";
+import {createLogger} from 'c/logger';
 const FIELDS = [CONTRACT_LOOKUP,CONNECTED_TO_EXISTING_CONTRACT];
 
 export default class FileUploaderCompLwc extends LightningElement {
+    logger;
     fields = FIELDS;
     @track validateUpload = false;
     contractLookupField = CONTRACT_LOOKUP;
@@ -26,15 +28,20 @@ export default class FileUploaderCompLwc extends LightningElement {
     get getValidateUpload () {
         this.validateUpload = (this.opportunity.data?.fields.ConnectedToExistingContract__c.value === 'No' && this.opportunity.data?.fields.Contract_Lookup__c.value == null) ||
             (this.opportunity.data?.fields.ConnectedToExistingContract__c.value === 'Yes' && this.opportunity.data?.fields.Contract_Lookup__c.value != null);
+        this.logger.info('validateUpload', this.validateUpload);
+        this.logger.saveLog();
     }
 
 
     @wire(getRecord, { recordId: '$recordId', fields: '$fields' })
     fetchOpp(response) {
         if(response) {
+            this.logger.info('fetchOpp',response);
             this.opportunity = response;
             this.getValidateUpload
             refreshApex(this.opportunity)
+            this.logger.info('opportunity',this.opportunity.data);
+            this.logger.saveLog();
         }
     }
 
@@ -46,6 +53,7 @@ export default class FileUploaderCompLwc extends LightningElement {
 
     openfileUpload(event) {
         console.log(event.target.files);
+        this.logger.info('target files', event.target.files);
         const file = event.target.files[0]
         var reader = new FileReader()
         reader.onload = () => {
@@ -56,6 +64,9 @@ export default class FileUploaderCompLwc extends LightningElement {
                 'recordId': this.recordId,
             }
             console.log(this.fileData)
+            this.logger.info('fileData', this.fileData);
+            this.logger.saveLog();
+            this.show = true;
         }
         reader.readAsDataURL(file)
     }
@@ -63,6 +74,7 @@ export default class FileUploaderCompLwc extends LightningElement {
 
     handleClick(){
         console.log(this.contractLookup);
+        this.logger.info('handleClick', this.contractLookup)
         const {base64, filename, recordId} = this.fileData
         let contractLookup = this.contractLookup;
         uploadContract({base64,filename,recordId,contractLookup}).then(response   =>{
@@ -70,17 +82,22 @@ export default class FileUploaderCompLwc extends LightningElement {
                     this.fileData = null
                     if(response.result === 'Error'){
                         title = `${filename} didn't upload`
+                        this.logger.error('Error uploading file', response.result);
+                        this.show = false;
                         this.toast(title,'ERROR')
                     }else{
                         if(response.result === 'SUCCESS') {
                             title = `${filename} uploaded successfully!!`
+                            this.logger.info('handleClick', response.result);
                             this.toast(title,response.result)
                         }else{
                             title = `${filename} didn't upload`
+                            this.logger.error('Error uploading file', response.result);
                             this.toast(title,'ERROR')
                         }
                     }
                 })
+        this.logger.saveLog();
     }
 
     toast(title,variant){
@@ -88,6 +105,8 @@ export default class FileUploaderCompLwc extends LightningElement {
             title,
             variant:variant
         })
+        this.logger.debug('toastEvent', toastEvent);
+        this.logger.saveLog();
         this.dispatchEvent(toastEvent)
     }
 }
