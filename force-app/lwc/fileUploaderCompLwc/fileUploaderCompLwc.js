@@ -9,7 +9,7 @@ import {createLogger} from 'c/logger';
 const FIELDS = [CONTRACT_LOOKUP,CONNECTED_TO_EXISTING_CONTRACT];
 
 export default class FileUploaderCompLwc extends LightningElement {
-    logger = logger;
+    logger;
     fields = FIELDS;
     @track validateUpload = false;
     contractLookupField = CONTRACT_LOOKUP;

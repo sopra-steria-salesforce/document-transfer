@@ -6,7 +6,7 @@ import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 import {createLogger} from 'c/logger';
 
 export default class ServiceNowUploadContractsQA extends LightningElement {
-    logger = logger;
+    logger;
     @api recordId; // The Opportunity Id
     isLoading = false;
     channelName = '/event/Refresh_Custom_Components__e';

@@ -16,7 +16,7 @@ import {createLogger} from 'c/logger';
 const FIELDS = [IS_CONTRACT_UPLOADED,CONTRACT_SERVICE_NOW_URL,CONTRACT_CATEGORY,STAGE_NAME,NAVISION_SE,NAVISION_DK,NAVISION_NO,OPPORTUNITY_OWNER_COUNTRY,NAVISION_ACCOUNT];
 
 export default class fileUploadMulti extends LightningElement {
-    logger = logger;
+    logger;
     fields = FIELDS;
     @api recordId;
     @track filesData = [];
