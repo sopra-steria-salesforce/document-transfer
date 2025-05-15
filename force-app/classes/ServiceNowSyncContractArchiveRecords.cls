@@ -92,7 +92,7 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
                 Logger.info('upsertResult', upsertResult).addTag('Sync Contact Archive Records');
                 if (!upsertResult.isSuccess()) {
                     for (Database.Error error : upsertResult.getErrors()) {
-                        Logger.error('Error: ' + error.getStatusCode() + error.getMessage()).addTag('Sync Contact Archive Records');
+                        Logger.error('Error: ' + error.getStatusCode() + error.getMessage(), upsertResult.getId()).addTag('Sync Contact Archive Records');
                     }
                     foundError = true;
                 }
