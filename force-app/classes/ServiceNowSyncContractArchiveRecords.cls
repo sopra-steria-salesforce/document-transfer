@@ -93,6 +93,15 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
                 if (!upsertResult.isSuccess()) {
                     for (Database.Error error : upsertResult.getErrors()) {
                         Logger.error('Error: ' + error.getStatusCode() + error.getMessage()).addTag('Sync Contact Archive Records');
+                    
+                        List<Contract_Archive__c> failedContracts = [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c WHERE Id = :upsertResult.getId()];
+                
+                        if (!failedContracts.isEmpty()) {
+                            for (Contract_Archive__c failedContract : failedContracts) {
+                                Logger.error('Sys_Id_External__c', failedContract.Sys_Id_External__c).addTag('Sync Contact Archive Records');
+                                Logger.error('Record Id', failedContract.Id).addTag('Sync Contact Archive Records');
+                            }
+                        }
                     }
                     foundError = true;
                 }
