@@ -30,7 +30,7 @@
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "63.0",
   "packageAliases": {
-    "platform-base@0.1.0.NEXT": "",
+    "platform-base@0.1.0.NEXT": "04tP10000005VZRIA2",
     "Nebula Logger@4.16.0.2": "04t5Y0000015pGyQAI",
     "DashboardsGSP@2.9.0.1": "04t1n000002WswiAAC",
     "Pardot@5.5.0.2": "04tKY000000kevRYAQ",
