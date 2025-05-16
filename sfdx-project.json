@@ -10,19 +10,19 @@
         {
           "package": "platform-base@0.1.0.NEXT"
         },
-				{
-					"package": "Nebula Logger@4.16.0.2"
-				},
-				{
-					"package": "DashboardsGSP@2.9.0.1"
-				},
-				{
-					"package": "Pardot@5.5.0.2"
-				},
-				{
-					"package": "Lightning Messaging Utility@1.5.0.1"
-				}
-			]
+        {
+          "package": "Nebula Logger@4.16.0.2"
+        },
+        {
+          "package": "DashboardsGSP@2.9.0.1"
+        },
+        {
+          "package": "Pardot@5.5.0.2"
+        },
+        {
+          "package": "Lightning Messaging Utility@1.5.0.1"
+        }
+      ]
     }
   ],
   "name": "document-transfer",
@@ -32,9 +32,9 @@
   "packageAliases": {
     "platform-base@0.1.0.NEXT": "",
     "Nebula Logger@4.16.0.2": "04t5Y0000015pGyQAI",
-		"DashboardsGSP@2.9.0.1": "04t1n000002WswiAAC",
-		"Pardot@5.5.0.2": "04tKY000000kevRYAQ",
-		"Lightning Messaging Utility@1.5.0.1": "04t5w000003gWWBAA2",
+    "DashboardsGSP@2.9.0.1": "04t1n000002WswiAAC",
+    "Pardot@5.5.0.2": "04tKY000000kevRYAQ",
+    "Lightning Messaging Utility@1.5.0.1": "04t5w000003gWWBAA2",
     "document-transfer": "0HoP100000001FRKAY"
   }
 }
