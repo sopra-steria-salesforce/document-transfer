@@ -32,3 +32,14 @@ ehthumbs.db
 $RECYCLE.BIN/
 
 .vscode/*
+.illuminatedCloud/*
+/IlluminatedCloud
+
+# Added by Illuminated Cloud
+/out/
+target/
+**/tsconfig*.json
+**/*.tsbuildinfo
+
+# WebStorm
+.idea/
