@@ -38,7 +38,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         opportunity.Contract_Category__c ==
         'New contract (not connected to framework/capacity agreement)'
       ) {
-        Logger.debug('Opportunity with new c ontract', opportunity);
+        Logger.debug('Opportunity with new contract (not connected to framework/capacity agreement)', opportunity);
         uploadNewContract(opportunity);
       } else if (
         opportunity.Contract_Category__c ==
@@ -46,6 +46,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         opportunity.Contract_Category__c ==
         'New call off (Agreement on existing contract)'
       ) {
+        Logger.debug('Opportunity upload existing contact', opportunity);
         uploadExistingContract(opportunity);
       }
     } catch (Exception ex) {
