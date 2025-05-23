@@ -127,7 +127,7 @@ jobs:
       # Install package in target org
       - name: Install package in target org
         id: deployment
-        run: sf package:install --package ${{ inputs.PACKAGE_ID }} --installation-key ${{ secrets.SF_PACKAGE_KEY }} --wait 20 --publish-wait 20 --no-prompt --json | tee output
+        run: sf package:install --package ${{ inputs.PACKAGE_ID }} --installation-key '${{ secrets.SF_PACKAGE_KEY }}' --wait 20 --publish-wait 20 --no-prompt --json | tee output
 
       # Check for Warnings
       - name: Check for Warnings
