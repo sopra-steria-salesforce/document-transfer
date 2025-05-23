@@ -113,7 +113,7 @@ jobs:
       - name: Get package keys
         if: steps.dependencies-cache.outputs.cache-hit != 'true' && steps.dependencies.outputs.exists == 'true'
         id: install-keys
-        run: echo "keys=$(jq -c '.packageDirectories[0].dependencies[]' ./sfdx-project.json | while read -r dependency; do if echo $dependency | jq -e '.versionNumber' > /dev/null; then echo -n "$(echo $dependency | jq -r '.package'):${{ secrets.SF_PACKAGE_KEY }} "; fi; done)" >> $GITHUB_OUTPUT
+        run: echo "keys=$(jq -c '.packageDirectories[0].dependencies[]' ./sfdx-project.json | while read -r dependency; do if echo $dependency | jq -e '.versionNumber' > /dev/null; then echo -n "$(echo $dependency | jq -r '.package'):'${{ secrets.SF_PACKAGE_KEY }}' "; fi; done)" >> $GITHUB_OUTPUT
 
       # Install sf depenencies
       - run: npx sfp dependency:install --installationkeys "${{ steps.install-keys.outputs.keys }}" --targetusername ${{ needs.scratch-org.outputs.username }} --targetdevhubusername ${{ vars.SF_PROD_USERNAME }}

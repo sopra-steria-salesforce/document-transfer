@@ -72,7 +72,7 @@ jobs:
           sf package:version:create \
             --definition-file ${{ steps.config.outputs.file }} \
             --package $packageName \
-            --installation-key ${{ secrets.SF_PACKAGE_KEY }} \
+            --installation-key '${{ secrets.SF_PACKAGE_KEY }}' \
             --wait 90 \
             --json \
             ${{ inputs.skipValidation && '--skip-validation' || '--code-coverage' }} \
@@ -86,7 +86,7 @@ jobs:
           sf package:version:create \
             --definition-file ${{ steps.config.outputs.file }} \
             --package $packageName \
-            --installation-key ${{ secrets.SF_PACKAGE_KEY }} \
+            --installation-key '${{ secrets.SF_PACKAGE_KEY }}' \
             --wait 60 \
             --json \
             --branch ${{ github.ref_name }} \
