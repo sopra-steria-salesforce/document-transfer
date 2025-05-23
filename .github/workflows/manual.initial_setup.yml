@@ -359,7 +359,7 @@ jobs:
       - name: Create Package Version
         id: create-package
         run: |
-          sf package:version:create --definition-file config/project-scratch-def.json --wait 90 --code-coverage --installation-key '${{ secrets.SF_PACKAGE_KEY }}' --package ${{ steps.repo-name.outputs.repository-name }} --json | tee output
+          sf package:version:create --definition-file config/project-scratch-def.json --wait 90 --code-coverage --installation-key ${{ secrets.SF_PACKAGE_KEY }} --package ${{ steps.repo-name.outputs.repository-name }} --json | tee output
           echo "packageId=$(cat output | jq -r '.result.SubscriberPackageVersionId')" >> $GITHUB_OUTPUT
           rm output
 
