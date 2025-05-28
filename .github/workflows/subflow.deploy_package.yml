@@ -177,6 +177,17 @@ jobs:
           cat .ssdx/logs/*.log | npx pino-pretty
           rm -rf .ssdx/logs
 
+      # Deploy Env Specific metadata
+      - name: Deploy Env Specific metadata
+        id: deployEnvSpecific
+        run: |
+          if [ -d "src-env-specific/${{ inputs.ENV }}" ]; then
+            echo "Starting deployment of env specific metadata"
+            sf project deploy start -d "src-env-specific/${{ inputs.ENV }}" --ignore-conflicts
+          else
+            echo "No env specific metadata to deploy to ${{ inputs.ENV }} for this package"
+          fi
+
     outputs:
       successfullyInstalled: ${{ steps.check-error.outputs.successfullyInstalled }}
       installOutput: ${{ steps.check-error.outputs.installOutput }}
