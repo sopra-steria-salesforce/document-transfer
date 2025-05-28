@@ -4,9 +4,10 @@ on:
     types:
       - opened
       - synchronize
-    paths-ignore:
-      - 'package.json'
-      - 'package-lock.json'
+    paths:
+      - 'force-app/**'
+      - 'unpackaged/**'
+      - 'config/**'
 concurrency:
   group: validation-${{ github.base_ref }}-${{ github.head_ref }}
   cancel-in-progress: true
