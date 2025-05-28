@@ -6,6 +6,9 @@
       "versionNumber": "0.1.0.NEXT",
       "versionDescription": "Handles document transfer logic, logging, and integration support.",
       "default": true,
+      "seedMetadata": {
+        "path": "pre_dependencies/standardValueSets"
+      },
       "dependencies": [
         {
           "package": "platform-base",
