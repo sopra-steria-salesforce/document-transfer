@@ -198,10 +198,6 @@ jobs:
       - name: Create scratch org
         run: echo '${{ secrets.SF_PROD_CLIENT_SECRET }}' | sf org:create:scratch --client-id ${{ secrets.SF_PROD_CLIENT_ID }} --definition-file ${{ env.CONFIG_FILE }} --alias ${{ env.SCRATCH_ORG_NAME }} --wait 20 --duration-days ${{ inputs.durationDays }} --json
 
-      - name: Change Language to English (for snapshot scratch orgs)
-        if: needs.init.outputs.disableSnapshot == 'false'
-        run: sf apex:run --target-org ${{ env.SCRATCH_ORG_NAME }} --file <(echo "List<User> user = [SELECT Id FROM User WHERE Name = 'User User' LIMIT 1]; user[0].LanguageLocaleKey = 'en_US'; update user;")
-
       - name: Output Scratch Org Auth
         id: new-scratch-org
         run: |
