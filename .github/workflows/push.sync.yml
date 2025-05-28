@@ -5,10 +5,9 @@ on:
     branches:
       - master
       - main
-  pull_request: # only used for sync jobs to preprod and uat
+  pull_request: # only used for sync jobs to uat
     types: closed
     branches:
-      - preprod
       - uat
 concurrency:
   group: sync-${{ github.event_name }}
@@ -28,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: #! due to matrix, all actions must be in the same sync job
-        ENV: [preprod, uat]
+        ENV: [uat]
     steps:
       - uses: actions/create-github-app-token@v1
         id: generate_token
@@ -142,7 +141,7 @@ jobs:
 
   update-sync-log-post:
     name: Update Sync Log Post
-    if: github.event_name == 'pull_request' && contains(fromJSON('["sync/preprod", "sync/uat", "sync/dev"]'), github.head_ref) && vars.SF_SLACK_ENABLED == 'true'
+    if: github.event_name == 'pull_request' && contains(fromJSON('["sync/uat", "sync/dev"]'), github.head_ref) && vars.SF_SLACK_ENABLED == 'true'
     permissions:
       actions: read
       contents: write

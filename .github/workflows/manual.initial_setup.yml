@@ -217,9 +217,9 @@ jobs:
         include:
           - ENV: prod
             SETTINGS: '{ "wait_timer": 15, "deployment_branch_policy": { "custom_branch_policies": false, "protected_branches": true }}'
-          - ENV: preprod
+          - ENV: uat
             SETTINGS: '{ "deployment_branch_policy": { "custom_branch_policies": false, "protected_branches": true }}'
-          - ENV: sit
+          - ENV: qa
             SETTINGS: '{ "deployment_branch_policy": { "custom_branch_policies": false, "protected_branches": true }}'
     continue-on-error: true
     steps:
@@ -398,7 +398,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        branch: [preprod]
+        branch: [uat]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/create-github-app-token@v1

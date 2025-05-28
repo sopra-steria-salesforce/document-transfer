@@ -84,11 +84,11 @@ jobs:
       - name: Check branch name
         uses: deepakputhraya/action-branch-name@master
         with:
-          regex: '^(cleanup\/.+|sync\/.+|CI\/.+)|(dev|preprod|main|master|test)|(${{ env.BRANCH_PREFIXES }}\/${{ env.BRANCHES }}-[0-9]+(-|_)([A-z]|[0-9]|-|_)+)$'
+          regex: '^(cleanup\/.+|sync\/.+|CI\/.+)|(dev|uat|main|master|test)|(${{ env.BRANCH_PREFIXES }}\/${{ env.BRANCHES }}-[0-9]+(-|_)([A-z]|[0-9]|-|_)+)$'
           # must be either:
           # cleanup/my-cleanup
           # dev
-          # preprod
+          # uat
           # test
           # master
           # main
