@@ -11,10 +11,6 @@
       },
       "dependencies": [
         {
-          "package": "platform-base",
-          "versionNumber": "0.1.0.LATEST"
-        },
-        {
           "package": "Nebula Logger@4.16.0.2"
         },
         {
@@ -25,6 +21,10 @@
         },
         {
           "package": "Lightning Messaging Utility@1.5.0.1"
+        },
+        {
+          "package": "platform-base",
+          "versionNumber": "0.1.0.LATEST"
         }
       ]
     }
