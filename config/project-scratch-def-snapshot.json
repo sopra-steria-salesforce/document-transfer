@@ -8,7 +8,6 @@
 			"enableFlowUseApexExceptionEmail": true
 		},
 		"campaignSettings": {
-			"enableCampaignInfluence2": true,
 			"enableAccountsAsCM": true
 		}
 	}

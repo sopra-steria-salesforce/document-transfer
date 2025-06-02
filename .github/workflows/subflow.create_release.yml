@@ -32,7 +32,7 @@ jobs:
       - name: Set release fields
         id: release
         run: |
-          echo "codeCoverageColor=${{ inputs.CODE_COVERAGE >= 85 && 'green' || inputs.CODE_COVERAGE < 85 && 'red' }}" >> $GITHUB_OUTPUT
+          echo "codeCoverageColor=${{ inputs.CODE_COVERAGE >= 75 && 'green' || inputs.CODE_COVERAGE < 75 && 'red' }}" >> $GITHUB_OUTPUT
           echo "qaStatus=${{ inputs.SUCCESSFULLY_INSTALLED == 'true' && 'builds' || 'failing' }}" >> $GITHUB_OUTPUT
           echo "qaColor=${{ inputs.SUCCESSFULLY_INSTALLED == 'true' && 'green' || 'red' }}" >> $GITHUB_OUTPUT
 
