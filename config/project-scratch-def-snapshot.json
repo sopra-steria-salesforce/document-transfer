@@ -1,0 +1,15 @@
+{
+	"orgName": "Sopra Steria Scratch Org",
+	"snapshot": "full_snapshot",
+	"language": "en_US",
+	"settings": {
+		"flowSettings": {
+			"canDebugFlowAsAnotherUser": true,
+			"enableFlowUseApexExceptionEmail": true
+		},
+		"campaignSettings": {
+			"enableCampaignInfluence2": true,
+			"enableAccountsAsCM": true
+		}
+	}
+}

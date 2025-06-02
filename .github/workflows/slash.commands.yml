@@ -173,7 +173,7 @@ jobs:
         uses: sopra-steria-salesforce/sf-cli-setup@v0.8
         if: needs.login.outputs.username
         with:
-          sf-cli-version: 2.34.7
+          sf-cli-version: 2.89.8
           username: ${{ needs.login.outputs.username }}
           instance-url: ${{ needs.login.outputs.instanceUrl }}
           client-id: ${{ secrets.SF_PROD_CLIENT_ID }}

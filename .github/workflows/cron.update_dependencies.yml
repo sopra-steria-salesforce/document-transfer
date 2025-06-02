@@ -59,7 +59,7 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }} # allows push to master
       - uses: sopra-steria-salesforce/sf-cli-setup@v0.8
         with:
-          sf-cli-version: 2.34.7
+          sf-cli-version: 2.89.8
           username: ${{ vars.SF_PROD_USERNAME }}
           client-id: ${{ secrets.SF_PROD_CLIENT_ID }}
           private-key: ${{ secrets.SF_PROD_PRIVATE_KEY }}

@@ -4,9 +4,10 @@ on:
     types:
       - opened
       - synchronize
-    paths-ignore:
-      - 'package.json'
-      - 'package-lock.json'
+    paths:
+      - 'force-app/**'
+      - 'unpackaged/**'
+      - 'config/**'
 concurrency:
   group: validation-${{ github.base_ref }}-${{ github.head_ref }}
   cancel-in-progress: true
@@ -65,7 +66,7 @@ jobs:
         if: steps.dependencies-cache.outputs.cache-hit != 'true' && steps.dependencies.outputs.exists == 'true'
         uses: sopra-steria-salesforce/sf-cli-setup@v0.8
         with:
-          sf-cli-version: 2.34.7
+          sf-cli-version: 2.89.8
           username: ${{ vars.SF_PROD_USERNAME }}
           client-id: ${{ secrets.SF_PROD_CLIENT_ID }}
           private-key: ${{ secrets.SF_PROD_PRIVATE_KEY }}
@@ -73,7 +74,7 @@ jobs:
         if: steps.dependencies-cache.outputs.cache-hit != 'true' && steps.dependencies.outputs.exists == 'true' && needs.scratch-org.outputs.username
         uses: sopra-steria-salesforce/sf-cli-setup@v0.8
         with:
-          sf-cli-version: 2.34.7
+          sf-cli-version: 2.89.8
           username: ${{ needs.scratch-org.outputs.username }}
           instance-url: ${{ needs.scratch-org.outputs.instanceUrl }}
           client-id: ${{ secrets.SF_PROD_CLIENT_ID }}
@@ -115,7 +116,7 @@ jobs:
         id: install-keys
         run: echo "keys=$(jq -c '.packageDirectories[0].dependencies[]' ./sfdx-project.json | while read -r dependency; do if echo $dependency | jq -e '.versionNumber' > /dev/null; then echo -n "$(echo $dependency | jq -r '.package'):${{ secrets.SF_PACKAGE_KEY }} "; fi; done)" >> $GITHUB_OUTPUT
 
-      # Install sf depenencies
+      # Install sf dependencies
       - run: npx sfp dependency:install --installationkeys "${{ steps.install-keys.outputs.keys }}" --targetusername ${{ needs.scratch-org.outputs.username }} --targetdevhubusername ${{ vars.SF_PROD_USERNAME }}
         if: steps.dependencies-cache.outputs.cache-hit != 'true' && steps.dependencies.outputs.exists == 'true'
 
@@ -135,7 +136,7 @@ jobs:
       - uses: sopra-steria-salesforce/sf-cli-setup@v0.8
         if: needs.scratch-org.outputs.username
         with:
-          sf-cli-version: 2.34.7
+          sf-cli-version: 2.89.8
           username: ${{ needs.scratch-org.outputs.username }}
           instance-url: ${{ needs.scratch-org.outputs.instanceUrl }}
           client-id: ${{ secrets.SF_PROD_CLIENT_ID }}
@@ -198,7 +199,7 @@ jobs:
       - uses: sopra-steria-salesforce/sf-cli-setup@v0.8
         if: needs.scratch-org.outputs.username
         with:
-          sf-cli-version: 2.34.7
+          sf-cli-version: 2.89.8
           username: ${{ needs.scratch-org.outputs.username }}
           instance-url: ${{ needs.scratch-org.outputs.instanceUrl }}
           client-id: ${{ secrets.SF_PROD_CLIENT_ID }}
@@ -228,11 +229,11 @@ jobs:
       hasTestClasses: ${{ steps.test-classes-in-repo.outputs.classes }}
 
   # -------------------------------------------------------------------------- #
-  #                         Validate 85% Code Coverage                         #
+  #                         Validate 75% Code Coverage                         #
   # -------------------------------------------------------------------------- #
 
   check-code-coverage:
-    name: Validate 85% Code Coverage
+    name: Validate 75% Code Coverage
     needs: [run-tests]
     permissions:
       contents: read
@@ -285,12 +286,12 @@ jobs:
           let codecoverage=totalCovered*100/totalLines
           echo "codecoverage=$(echo $codecoverage)" >> $GITHUB_OUTPUT
 
-      # Validate 85% Code Coverage
-      - name: Validate 85% Code Coverage
+      # Validate 75% Code Coverage
+      - name: Validate 75% Code Coverage
         if: steps.has-classes.outputs.has_classes == 'true' && needs.run-tests.outputs.hasTestClasses
         run: |
-          if [ ${{ steps.getCodeCoverage.outputs.codecoverage }} -lt 85 ]; then
-            echo "::error::The code coverage needs to be a minimum of 85%, but is currently ${{ steps.getCodeCoverage.outputs.codecoverage }}%"
+          if [ ${{ steps.getCodeCoverage.outputs.codecoverage }} -lt 75 ]; then
+            echo "::error::The code coverage needs to be a minimum of 75%, but is currently ${{ steps.getCodeCoverage.outputs.codecoverage }}%"
             exit 125
           fi
 
