@@ -23,6 +23,9 @@
           "package": "Lightning Messaging Utility@1.5.0.1"
         },
         {
+          "package": "trigger-actions-framework@0.3.2"
+        },
+        {
           "package": "platform-base",
           "versionNumber": "0.1.0.LATEST"
         }
