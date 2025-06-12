@@ -1,4 +1,4 @@
-public inherited sharing class AwardedOpportunities {
+public inherited sharing class AwardedOpportunities{
 
 	public List<Opportunity> awardedOpportunities;
 
@@ -10,8 +10,8 @@ public inherited sharing class AwardedOpportunities {
 		}
 	}
 
-	public AwardedOpportunities getOpportunitiesThatChangedToAwarded (List<Opportunity>oldOpportunities, List<Opportunity> newOpportunities){
-		List<Opportunity> opportunitiesThatChangedToAwarded = (List<Opportunity>) UtilityService.getRecordsWithChangedField(oldOpportunities, newOpportunities, 'StageName');
+	public static AwardedOpportunities getOpportunitiesThatChangedToAwarded (List<Opportunity>oldOpportunities, List<Opportunity> newOpportunities){
+		List<Opportunity> opportunitiesThatChangedToAwarded = (List<Opportunity>) UtilityService.getRecordsWithChangedField(oldOpportunities, newOpportunities, 'StageName', Utils.AWARDED);
 		return new AwardedOpportunities(opportunitiesThatChangedToAwarded);
 	}
 }

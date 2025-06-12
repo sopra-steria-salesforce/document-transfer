@@ -1,14 +1,11 @@
 public with sharing class UpsertContractOnAwardedOpportunities implements TriggerAction.BeforeUpdate{
 
 	public static void beforeUpdate(List<SObject> oldOpportunities, List<SObject> newOpportunities) {
+		AwardedOpportunities newlyAwardedOpportunities = AwardedOpportunities.getOpportunitiesThatChangedToAwarded(oldOpportunities,newOpportunities);
 		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>((List<Opportunity>) oldOpportunities);
-		for (Opportunity opportunity: (List<Opportunity>) newOpportunities){
+		for (Opportunity opportunity: (List<Opportunity>) newlyAwardedOpportunities.awardedOpportunities){
 			Opportunity newOpportunity=opportunity;
 			Opportunity oldOpportunity=oldOpportunitiesByIds.get(newOpportunity.Id);
-
-			if(!hasOpportunityStageChangedToAwarded(oldOpportunity, newOpportunity)){
-				continue;
-			}
 
 			if(
 				newOpportunity.New_Or_Renewal__c == 'New' &&
@@ -24,10 +21,6 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 			}
 		}
 		Logger.saveLog();
-	}
-
-	public static Boolean hasOpportunityStageChangedToAwarded(Opportunity oldOpportunity, Opportunity newOpportunity){
-		return (newOpportunity.StageName == Utils.AWARDED && newOpportunity.StageName != oldOpportunity.StageName);
 	}
 
 	public static Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Opportunity oldOpportunity, Opportunity newOpportunity){
