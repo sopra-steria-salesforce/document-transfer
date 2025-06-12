@@ -1,0 +1,35 @@
+<template>
+    <template if:true={contractExist}>
+        <p if:true={contractExist}>Select a Contract:</p>
+        <lightning-datatable
+                columns={columns}
+                data={data}
+                key-field="contractId"
+                max-row-selection="1"
+                onrowselection={handleContract}>
+        </lightning-datatable>
+    </template>
+    <template if:true={displaySubArea}>
+        <p class="slds-m-top_medium" if:true={contractExist}>Select sub Area:</p>
+        <lightning-datatable
+                columns={subAreaColumns}
+                data={subAreas}
+                key-field="subAreaName"
+        max-row-selection="1"
+        onrowselection={handleSubArea}>
+        </lightning-datatable>
+    </template>
+<!--    <template if:true={displayCallOffs}>-->
+<!--        <p class="slds-m-top_medium" if:true={contractExist}>Select call Off Contract:</p>-->
+<!--        <lightning-datatable-->
+<!--                columns={callOffWrapperColumns}-->
+<!--                data={parentAgreements}-->
+<!--                key-field="callOffId"-->
+<!--                max-row-selection="1"-->
+<!--                onrowselection={handleCallOff}>-->
+<!--        </lightning-datatable>-->
+<!--    </template>-->
+    <template if:false={contractExist}>
+        <p>Sorry, no valid contracts were found for this account</p>
+    </template>
+</template>

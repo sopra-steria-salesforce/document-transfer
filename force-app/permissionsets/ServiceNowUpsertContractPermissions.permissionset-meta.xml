@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>OpportunityContractController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OpportunityUpdateBULead</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ServiceNowUploadContracts</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ServiceNowUploadContractsController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ServiceNowUploadContractsQueueable</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>UpsertContractOnAwardedOpportunities</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <description>Permissions needed to upsert contracts towards ServiceNow</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>ServiceNow Upsert Contract Permissions</label>
+</PermissionSet>
