@@ -1,0 +1,25 @@
+<template>
+    <lightning-modal-header
+            label="Connect Opportunity with Contract from Contracts Archive"
+    ></lightning-modal-header>
+    <lightning-modal-body>
+        <div class="slds-is-relative">
+            <div class="slds-m-left_x-small">
+                <c-contracts-list2 oncontractselect={handleContractSelect}></c-contracts-list2>
+            </div>
+            <div if:true={isSaving}>
+                <lightning-spinner
+                        alternative-text="Loading..." class="slds-align_absolute-center" variant="brand">
+                </lightning-spinner>
+            </div>
+        </div>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="Cancel" onclick={closeAction} variant="neutral">
+            <span class="slds-assistive-text">Cancel and close</span>
+        </lightning-button>
+        <lightning-button class="slds-m-left_x-small" disabled={disableButton} label="Save" onclick={handleSave}
+                          variant="brand">
+        </lightning-button>
+    </lightning-modal-footer>
+</template>

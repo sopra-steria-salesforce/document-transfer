@@ -1,0 +1,29 @@
+/**
+ * Created by pjakubiak on 8/9/2023.
+ */
+/* c-contracts-list2.css */
+
+.empty-message {
+    color: #999;
+    font-style: italic;
+    padding: 8px;
+}
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.checkbox-container input[type="radio"] {
+    margin-right: 10px; /* Adjust the spacing between checkbox and contract name */
+    transform: scale(1.2); /* Increase the size of the radio button */
+}
+
+.checkmark {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+    border-radius: 50%;
+}

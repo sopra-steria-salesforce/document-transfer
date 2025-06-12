@@ -1,0 +1,33 @@
+/**
+ * Created by pjakubiak on 7/4/2023.
+ */
+
+/* contractsListPopup.css */
+
+
+/*.slds-modal {*/
+/*    position: fixed;*/
+/*    top: 50%;*/
+/*    left: 50%;*/
+/*    transform: translate(-50%, -50%);*/
+/*    z-index: 9000;*/
+/*}*/
+
+/*.slds-modal_large {*/
+/*    width: 80%;*/
+/*    max-width: 900px;*/
+/*}*/
+
+/*.slds-modal_medium {*/
+/*    width: 60%;*/
+/*    max-width: 600px;*/
+/*}*/
+
+/*.slds-modal_small {*/
+/*    width: 40%;*/
+/*    max-width: 400px;*/
+/*}*/
+
+/*.slds-modal__content {*/
+/*    background-color: #ffffff;*/
+/*}*/
