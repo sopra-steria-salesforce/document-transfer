@@ -1,8 +1,9 @@
 public with sharing class UpsertContractOnAwardedOpportunities implements TriggerAction.BeforeUpdate{
 
-	public static void beforeUpdate(List<SObject> oldOpportunities, List<SObject> newOpportunities) {
-		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>((List<Opportunity>) oldOpportunities);
-		for (Opportunity opportunity: (List<Opportunity>) newOpportunities){
+	public void beforeUpdate(List<Opportunity> newOpportunities, List<Opportunity> oldOpportunities) {
+		Logger.debug('UpsertContractOnAwardedOpportunities - Before Update');
+		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>(oldOpportunities);
+		for (Opportunity opportunity:newOpportunities){
 			Opportunity newOpportunity=opportunity;
 			Opportunity oldOpportunity=oldOpportunitiesByIds.get(newOpportunity.Id);
 
