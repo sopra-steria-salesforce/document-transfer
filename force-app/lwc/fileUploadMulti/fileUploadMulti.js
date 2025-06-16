@@ -3,16 +3,13 @@ import {getFieldValue, getRecord, getRecordNotifyChange, notifyRecordUpdateAvail
 import CONTRACT_CATEGORY from "@salesforce/schema/Opportunity.Contract_Category__c";
 import CONTRACT_SERVICE_NOW_URL from '@salesforce/schema/Opportunity.ContractServiceNowUrl__c';
 import IS_CONTRACT_UPLOADED from '@salesforce/schema/Opportunity.IsContractUploaded__c';
-import NAVISION_SE from '@salesforce/schema/Opportunity.Navision_Customer_SE__c';
-import NAVISION_NO from '@salesforce/schema/Opportunity.Navision_Customer_NO__c';
-import NAVISION_DK from '@salesforce/schema/Opportunity.Navision_Customer_DK__c';
 import NAVISION_ACCOUNT from '@salesforce/schema/Opportunity.Navision_Account_in_Owners_Country__c';
 import OPPORTUNITY_OWNER_COUNTRY from '@salesforce/schema/Opportunity.Owner_Country__c';
 import STAGE_NAME from '@salesforce/schema/Opportunity.StageName';
 import {onError, subscribe, unsubscribe} from "lightning/empApi";
 import { RefreshEvent } from 'lightning/refresh';
 import {refreshApex} from "@salesforce/apex";
-const FIELDS = [IS_CONTRACT_UPLOADED,CONTRACT_SERVICE_NOW_URL,CONTRACT_CATEGORY,STAGE_NAME,NAVISION_SE,NAVISION_DK,NAVISION_NO,OPPORTUNITY_OWNER_COUNTRY,NAVISION_ACCOUNT];
+const FIELDS = [IS_CONTRACT_UPLOADED,CONTRACT_SERVICE_NOW_URL,CONTRACT_CATEGORY,STAGE_NAME,'Opportunity.Account.Navision_Customer_SE__c','Opportunity.Account.Navision_Customer_NO__c','Opportunity.Account.Navision_Customer_DK__c',OPPORTUNITY_OWNER_COUNTRY,NAVISION_ACCOUNT];
 
 export default class fileUploadMulti extends LightningElement {
     fields = FIELDS;
@@ -41,10 +38,10 @@ export default class fileUploadMulti extends LightningElement {
         self.refreshMyData();
         if(this.opportunity.data){
             this.showConditionalSection = this.opportunity.data.fields.StageName.value === '5 - Awarded' && (this.opportunity.data.fields.ContractServiceNowUrl__c.value === null || this.opportunity.data.fields.ContractServiceNowUrl__c.value === undefined || this.opportunity.data.fields.ContractServiceNowUrl__c.value === '');
-            this.navisionCheck = ((this.opportunity.data.fields.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark') || (this.opportunity.data.fields.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden') || (this.opportunity.data.fields.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway')) || this.opportunity.data.fields.Navision_Account_in_Owners_Country__c.value === true;
-            console.log(this.opportunity.data.fields.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway');
-            console.log(this.opportunity.data.fields.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden');
-            console.log(this.opportunity.data.fields.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark');
+            this.navisionCheck = ((this.opportunity.data.fields.Account.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark') || (this.opportunity.data.fields.Account.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden') || (this.opportunity.data.fields.Account.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway')) || this.opportunity.data.fields.Navision_Account_in_Owners_Country__c.value === true;
+            console.log(this.opportunity.data.fields.Account.Navision_Customer_NO__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Norway');
+            console.log(this.opportunity.data.fields.Account.Navision_Customer_SE__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Sweden');
+            console.log(this.opportunity.data.fields.Account.Navision_Customer_DK__c.value === true && this.opportunity.data.fields.Owner_Country__c === 'Denmark');
             console.log(this.opportunity.data.fields.Navision_Account_in_Owners_Country__c.value === true);
         }
         refreshApex(this.opportunity).then(() => {
