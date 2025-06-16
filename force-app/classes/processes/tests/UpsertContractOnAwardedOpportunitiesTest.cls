@@ -19,32 +19,29 @@ public with sharing class UpsertContractOnAwardedOpportunitiesTest {
 	}
 
 	@IsTest
-	static void testOpportunityOwnerCountryMatchesNavisionCustomerCountry(){
-		Opportunity oldOpportunity = TestDataFactory.createOpportunities(1,false,true)[0];
-		oldOpportunity.Navision_Customer_NO__c=true;
-		User u = new User(
-				Id=UserInfo.getUserId(),
-				Country='Norway'
-		);
-		oldOpportunity.Owner=u;
-		Opportunity newOpportunity = oldOpportunity.clone(true);
-		Formula.recalculateFormulas(new List<Opportunity>{newOpportunity});
-		Assert.isTrue(newOpportunity.Navision_Account_in_Owners_Country__c);
-		Assert.isTrue(UpsertContractOnAwardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(oldOpportunity,newOpportunity));
-	}
-
-	@IsTest
-	static void testOpportunityOwnerCountryDoesNotMatchNavisionCustomerCountry(){
-		Opportunity oldOpportunity = TestDataFactory.createOpportunities(1,false,true)[0];
-		oldOpportunity.Navision_Customer_NO__c=true;
+	static void mockedOpportunityShouldEnqueueServiceNowUploadContractsQueueableWhenNewlyAwardedOpportunityOwnerMatchesNavisionCustomerCountry(){
+		DML.isMockDML=true;
+		List<Opportunity> oldOpportunities = TestDataFactory.createOpportunities(2,false,true);
+		oldOpportunities[0].Account.Navision_Customer_NO__c=true;
+		oldOpportunities[1].Account.Navision_Customer_SE__c=true;
 		User u = new User(
 				Id=UserInfo.getUserId(),
 				Country='Sweden'
 		);
-		oldOpportunity.Owner=u;
-		Opportunity newOpportunity = oldOpportunity.clone(true);
-		Formula.recalculateFormulas(new List<Opportunity>{newOpportunity});
-		Assert.isTrue(newOpportunity.Navision_Account_in_Owners_Country__c);
-		Assert.isTrue(UpsertContractOnAwardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(oldOpportunity,newOpportunity));
+		oldOpportunities[0].Owner=u;
+		oldOpportunities[1].Owner=u;
+		oldOpportunities[0].New_or_Renewal__c='New';
+		oldOpportunities[1].New_or_Renewal__c='New';
+		List<Opportunity> newOpportunities = oldOpportunities.deepClone(true);
+		newOpportunities[0].StageName=Utils.AWARDED;
+		newOpportunities[1].StageName=Utils.AWARDED;
+		UpsertContractOnAwardedOpportunities testUpsertContractOnAwardedOpportunities = new UpsertContractOnAwardedOpportunities();
+
+		Test.startTest();
+		testUpsertContractOnAwardedOpportunities.beforeUpdate(newOpportunities, oldOpportunities);
+		Test.stopTest();
+
+		Assert.isFalse(DML.enqueuedJobs.isEmpty(),'1 Queueable job should be queued');
+		Assert.isInstanceOfType(DML.enqueuedJobs[0],ServiceNowUploadContractsQueueable.class, 'ServiceNowUploadContractsQueueable should be queued');
 	}
 }
