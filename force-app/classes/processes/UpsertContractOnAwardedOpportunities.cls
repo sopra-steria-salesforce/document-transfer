@@ -17,7 +17,7 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 				String.isBlank(newOpportunity.ContractServiceNowUrl__c) &&
 				newOpportunity.Navision_Account_in_Owners_Country__c
 			){
-				System.enqueueJob(new ServiceNowUploadContractsQueueable(newOpportunity));
+				DML.enqueueJob(new ServiceNowUploadContractsQueueable(newOpportunity));
 				Logger.info('Contract is created in ServiceNow for this Opportunity', newOpportunity).addTag('Opportunity trigger handler service');
 			} else {
 				Logger.info('Contract is not created is ServiceNow for this Opportunity', newOpportunity).addTag('Opportunity trigger handler service');
