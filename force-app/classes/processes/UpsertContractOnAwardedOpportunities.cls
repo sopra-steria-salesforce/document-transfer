@@ -1,8 +1,12 @@
 public with sharing class UpsertContractOnAwardedOpportunities implements TriggerAction.BeforeUpdate{
-
+	@TestVisible
+	private static Map<Id, Account> parentAccountsByIds;
 	public void beforeUpdate(List<Opportunity> newOpportunities, List<Opportunity> oldOpportunities) {
 		Logger.debug('UpsertContractOnAwardedOpportunities - Before Update');
+		Logger.suspendSaving();
 		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>(oldOpportunities);
+		parentAccountsByIds = getAccountByIdsFromChildOpportunities(newOpportunities);
+
 		for (Opportunity opportunity:newOpportunities){
 			Opportunity newOpportunity=opportunity;
 			Opportunity oldOpportunity=oldOpportunitiesByIds.get(newOpportunity.Id);
@@ -14,45 +18,42 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 			if(
 				newOpportunity.New_Or_Renewal__c == 'New' &&
 				String.isBlank(newOpportunity.ContractServiceNowUrl__c) &&
-				doesOpportunityOwnerCountryMatchNavisionCustomerCountry(oldOpportunity, newOpportunity)
+				doesOpportunityOwnerCountryMatchNavisionCustomerCountry(newOpportunity)
 			){
-				System.enqueueJob(new ServiceNowUploadContractsQueueable(newOpportunity));
+				DML.enqueueJob(new ServiceNowUploadContractsQueueable(newOpportunity));
 				Logger.info('Contract is created in ServiceNow for this Opportunity', newOpportunity).addTag('Opportunity trigger handler service');
+				Logger.resumeSaving();
 			} else {
 				Logger.info('Contract is not created is ServiceNow for this Opportunity', newOpportunity).addTag('Opportunity trigger handler service');
 				Logger.info('New or renewal: ' + newOpportunity.New_Or_Renewal__c).addTag('Opportunity trigger handler service');
 				Logger.info('Service Now contract url: ' + newOpportunity.ContractServiceNowUrl__c).addTag('Opportunity trigger handler service');
+				if (!doesOpportunityOwnerCountryMatchNavisionCustomerCountry(newOpportunity)) {
+					Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision').addTag('Opportunity trigger handler service');
+				}
+				Logger.resumeSaving();
 			}
 		}
 		Logger.saveLog();
+		Logger.resumeSaving();
 	}
 
 	public static Boolean hasOpportunityStageChangedToAwarded(Opportunity oldOpportunity, Opportunity newOpportunity){
 		return (newOpportunity.StageName == Utils.AWARDED && newOpportunity.StageName != oldOpportunity.StageName);
 	}
 
-	public static Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Opportunity oldOpportunity, Opportunity newOpportunity){
-		Boolean hasNavisionCustomerChanged =
-				(newOpportunity.Navision_Customer_NO__c != oldOpportunity.Navision_Customer_NO__c) ||
-						(newOpportunity.Navision_Customer_SE__c != oldOpportunity.Navision_Customer_SE__c) ||
-						(newOpportunity.Navision_Customer_DK__c != oldOpportunity.Navision_Customer_DK__c);
-		Logger.debug('hasNavisionCustomerChanged: ' + hasNavisionCustomerChanged, newOpportunity).addTag('Opportunity trigger handler service');
-
-		Boolean doesOwnerCountryMatchCountryInNavision =
-				(newOpportunity.Owner_Country__c == 'Norway' && newOpportunity.Navision_Customer_NO__c) ||
-						(newOpportunity.Owner_Country__c == 'Sweden' && newOpportunity.Navision_Customer_SE__c) ||
-						(newOpportunity.Owner_Country__c == 'Denmark' && newOpportunity.Navision_Customer_DK__c);
-		Logger.debug('doesOwnerCountryMatchCountryInNavision: ' + doesOwnerCountryMatchCountryInNavision, newOpportunity).addTag('Opportunity trigger handler service');
-		Logger.debug('Navision_Account_in_Owners_Country__c value on opportunity: ' + newOpportunity.Navision_Account_in_Owners_Country__c.toString(), newOpportunity).addTag('Opportunity trigger handler service');
-
-		if (newOpportunity.Navision_Account_in_Owners_Country__c!=doesOwnerCountryMatchCountryInNavision) {
-			Logger.warn('Navision_Account_in_Owners_Country__c does not match doesOwnerCountryMatchCountryInNavision!',newOpportunity).addTag('Opportunity trigger handler service');
-			Formula.recalculateFormulas(new List<Opportunity>{newOpportunity});
-			Logger.debug('Navision_Account_in_Owners_Country__c after Formula recalculation: ' +newOpportunity.Navision_Account_in_Owners_Country__c, newOpportunity).addTag('Opportunity trigger handler service');
+	public static Map<Id, Account> getAccountByIdsFromChildOpportunities(List<Opportunity> newOpportunities){
+		Set<Id> accountIds = new Set<Id>();
+		for (Opportunity opportunity:newOpportunities){
+			accountIds.add(opportunity.AccountId);
 		}
+		return new Map<Id, Account>([SELECT Navision_Customer_NO__c, Navision_Customer_DK__c, Navision_Customer_SE__c FROM Account WHERE Id IN: accountIds]);
+	}
 
-		return newOpportunity.Navision_Account_in_Owners_Country__c ||
-				(doesOwnerCountryMatchCountryInNavision &&
-						hasNavisionCustomerChanged);
+	public static Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Opportunity opportunity){
+		Account parentAccount=parentAccountsByIds.get(opportunity.AccountId);
+		return
+				opportunity.Owner.Country=='Norway' && parentAccount.Navision_Customer_NO__c ||
+				opportunity.Owner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
+				opportunity.Owner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
 	}
 }
