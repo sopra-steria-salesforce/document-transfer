@@ -34,6 +34,7 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 			}
 		}
 		Logger.saveLog();
+		Logger.resumeSaving();
 	}
 
 	public static Boolean hasOpportunityStageChangedToAwarded(Opportunity oldOpportunity, Opportunity newOpportunity){
