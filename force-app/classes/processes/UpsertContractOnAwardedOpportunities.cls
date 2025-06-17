@@ -50,10 +50,10 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 	}
 
 	public static Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Opportunity opportunity){
-		Account parenAccount=parentAccountsByIds.get(opportunity.AccountId);
+		Account parentAccount=parentAccountsByIds.get(opportunity.AccountId);
 		return
-				opportunity.Owner.Country=='Norway' && parenAccount.Navision_Customer_NO__c ||
-				opportunity.Owner.Country=='Sweden' && parenAccount.Navision_Customer_SE__c ||
-				opportunity.Owner.Country=='Denmark' && parenAccount.Navision_Customer_DK__c;
+				opportunity.Owner.Country=='Norway' && parentAccount.Navision_Customer_NO__c ||
+				opportunity.Owner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
+				opportunity.Owner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
 	}
 }
