@@ -7,7 +7,6 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>(oldOpportunities);
 		parentAccountsByIds = getAccountByIdsFromChildOpportunities(newOpportunities);
 
-		Formula.recalculateFormulas(newOpportunities); // To ensure that Navision_Account_in_Owners_Country__c is up to date
 		for (Opportunity opportunity:newOpportunities){
 			Opportunity newOpportunity=opportunity;
 			Opportunity oldOpportunity=oldOpportunitiesByIds.get(newOpportunity.Id);
