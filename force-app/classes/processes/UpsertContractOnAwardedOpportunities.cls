@@ -17,7 +17,7 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 					opportunity.New_Or_Renewal__c == 'New' &&
 					String.isBlank(opportunity.ContractServiceNowUrl__c)
 			){
-				System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunity));
+				DML.enqueueJob(new ServiceNowUploadContractsQueueable(opportunity));
 				Logger.info('Contract is created in ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
 				Logger.resumeSaving();
 			} else {
