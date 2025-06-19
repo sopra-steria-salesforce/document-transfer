@@ -8,7 +8,7 @@ public with sharing class AwardedOpportunitiesTest {
 			opportunity.StageName = Utils.PLANNING_0; //Must use Utils instead on Opportunities to avoid getting "Variable does not exist: AWARDED" on Deployment (known issue for Abstract classes)
 		}
 		AwardedOpportunities newlyAwardedOpportunities = new AwardedOpportunities(opportunities);
-		Assert.isTrue(newlyAwardedOpportunities.getRecords().isEmpty());
+		Assert.isTrue(newlyAwardedOpportunities.isEmpty());
 	}
 
 	@IsTest
@@ -19,7 +19,7 @@ public with sharing class AwardedOpportunitiesTest {
 		AwardedOpportunities newlyAwardedOpportunities = new AwardedOpportunities(opportunities);
 		Assert.areEqual(
 				2,
-				newlyAwardedOpportunities.getRecords().size(),
+				newlyAwardedOpportunities.size(),
 				'2 Opportunities should remain after filtering out awarded Opportunities');
 	}
 
@@ -35,7 +35,7 @@ public with sharing class AwardedOpportunitiesTest {
 		AwardedOpportunities newlyAwardedOpportunities = new AwardedOpportunities(newOpportunities, oldOpportunities);
 		Assert.areEqual(
 				2,
-				newlyAwardedOpportunities.getRecords().size(),
+				newlyAwardedOpportunities.size(),
 				'2 Opportunities should remain after filtering out newly awarded Opportunities'
 		);
 	}
@@ -74,7 +74,21 @@ public with sharing class AwardedOpportunitiesTest {
 		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(opportunities);
 		System.debug(awardedOpportunities.getRecords());
 		awardedOpportunities.filterByMatchingOwnerCountry();
-		Assert.areEqual(1, awardedOpportunities.getRecords().size(), '1 Awarded Opportunity Owner should match Navision Country');
+		Assert.areEqual(1, awardedOpportunities.size(), '1 Awarded Opportunity Owner should match Navision Country');
 		Assert.areEqual(opportunities[1].Id, awardedOpportunities.getRecords()[0].Id, 'Only 1 Awarded Opportunity Owner Matches Navision Country');
+	}
+
+	@IsTest
+	static void shouldReturn1NewOpportunityWithNoContractInServiceNow(){
+		List<Opportunity> opportunities = TestDataFactory.createOpportunities(2,false,true);
+		opportunities[0].New_or_Renewal__c='New';
+		opportunities[1].New_or_Renewal__c='New';
+		opportunities[0].ContractServiceNowUrl__c='URL';
+		opportunities[0].StageName=Utils.AWARDED;
+		opportunities[1].StageName=Utils.AWARDED;
+		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(opportunities);
+		awardedOpportunities.getNewOpportunitiesWithNoContractInServiceNow();
+		Assert.areEqual(1, awardedOpportunities.size(), 'Only 1 New Opportunity should remain');
+		Assert.areEqual(opportunities[1].Id, awardedOpportunities.getRecords()[0].Id,'Only the Opportunity without Contract ServiceNow URL should remain');
 	}
 }

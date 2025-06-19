@@ -18,7 +18,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				awardedOpportunities.add(newOpportunity);
 			}
 		}
-		this.opportunities =awardedOpportunities;
+		this.opportunities=awardedOpportunities;
 	}
 
 	/**
@@ -35,6 +35,38 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		}
 		this.opportunities =opportunitiesWhereOwnerCountryMatchesNavisionCountry;
 		return this;
+	}
+
+	public AwardedOpportunities getNewOpportunitiesWithNoContractInServiceNow(){
+		List<Opportunity> opportunitiesWithNoContractInServiceNow = new List<Opportunity>();
+		for (Opportunity opportunity:this.opportunities){
+			if(
+				opportunity.New_Or_Renewal__c == 'New' &&
+				String.isBlank(opportunity.ContractServiceNowUrl__c)
+			){
+				opportunitiesWithNoContractInServiceNow.add(opportunity);
+				Logger.info('Contract is created in ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
+				Logger.resumeSaving();
+			} else {
+				Logger.info('Contract is not created is ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
+				Logger.info('New or renewal: ' + opportunity.New_Or_Renewal__c).addTag('Opportunity trigger handler service');
+				Logger.info('Service Now contract url: ' + opportunity.ContractServiceNowUrl__c).addTag('Opportunity trigger handler service');
+				Logger.resumeSaving();
+			}
+		}
+		if (!this.isEmpty()) {
+			Logger.saveLog();
+		}
+
+		this.opportunities=opportunitiesWithNoContractInServiceNow;
+		return this;
+	}
+
+	public void upsertContractToServiceNow(){
+		//TODO: Bulkify - CIS-105
+		for (Opportunity opportunity:this.opportunities){
+			DML.enqueueJob(new ServiceNowUploadContractsQueueable(opportunity));
+		}
 	}
 
 	public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Account parentAccount, User opportunityOwner){
