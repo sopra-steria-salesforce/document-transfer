@@ -1,6 +1,24 @@
 public inherited sharing abstract class Opportunities {
 	protected List<Opportunity> opportunities;
 
+	public Map<Id, Account> parentAccountsByIds {
+		get{
+			if (parentAccountsByIds.isEmpty()) {
+				parentAccountsByIds=getParentAccountByIds();
+			}
+			return parentAccountsByIds;
+		}
+	}
+
+	public Map<Id, User> opportunityOwnersByIds {
+		get{
+			if (opportunityOwnersByIds.isEmpty()) {
+				opportunityOwnersByIds = getOpportunityOwnersByIds();
+			}
+			return opportunityOwnersByIds;
+		}
+	}
+
 	//STAGENAME
 	public static final String PLANNING_0 = '0 - Planning';
 	public static final String OFFER_4 = '4 - Offer';

@@ -25,10 +25,8 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 
 	public AwardedOpportunities filterByMatchingOwnerCountry(){
 		List<Opportunity> opportunitiesWhereOwnerCountryMatchesNavisionCountry = new List<Opportunity>();
-		Map<Id, Account> parentAccountsByIds = getParentAccountByIds();
-		Map<Id, User> opportunityOwnerByIds = getOpportunityOwnersByIds();
 		for (Opportunity opportunity:this.opportunities){
-			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccountsByIds.get(opportunity.AccountId), opportunityOwnerByIds.get(opportunity.OwnerId))) {
+			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccountsByIds.get(opportunity.AccountId), opportunityOwnersByIds.get(opportunity.OwnerId))) {
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
