@@ -8,4 +8,20 @@ public inherited sharing abstract class Opportunities {
 	public Boolean isEmpty(){
 		return this.opportunities.isEmpty();
 	}
+
+	public Map<Id, Account> getParentAccountByIds(){
+		Set<Id> accountIds = new Set<Id>();
+		for (Opportunity opportunity:this.opportunities){
+			accountIds.add(opportunity.AccountId);
+		}
+		return new Map<Id, Account>([SELECT Navision_Customer_NO__c, Navision_Customer_DK__c, Navision_Customer_SE__c FROM Account WHERE Id IN: accountIds]);
+	}
+
+	public Map<Id, User> getOpportunityOwnersByIds(){
+		Set<Id> ownerIds = new Set<Id>();
+		for (Opportunity opportunity:this.opportunities){
+			ownerIds.add(opportunity.OwnerId);
+		}
+		return new Map<Id, User>([SELECT Country FROM User WHERE Id IN:ownerIds]);
+	}
 }
