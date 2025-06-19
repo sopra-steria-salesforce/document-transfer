@@ -21,16 +21,17 @@ public with sharing class UpsertContractOnAwardedOpportunitiesTest {
     static void testOpportunityOwnerCountryMatchesNavisionCustomerCountry(){
         List<Opportunity> opportunities = TestDataFactory.createOpportunities(2,false,true);
         UpsertContractOnAwardedOpportunities.parentAccountsByIds=new Map<Id, Account>{
-                opportunities[0].AccountId => new Account(Navision_Customer_SE__c=true)
+                opportunities[0].AccountId => new Account(Navision_Customer_NO__c=true),
+                opportunities[1].AccountId => new Account(Navision_Customer_SE__c=true)
         };
-        opportunities[0].Owner= new User(Id = UserInfo.getUserId(), Country = 'Sweden');
-        opportunities[1].Owner=new User(Id = UserInfo.getUserId(), Country = 'Norway');
+        UpsertContractOnAwardedOpportunities.opportunityOwnersByIds=new Map<Id, User>{UserInfo.getUserId()=>new User(Country='Sweden')};
+        opportunities[0].OwnerId = UserInfo.getUserId();
+        opportunities[1].OwnerId = UserInfo.getUserId();
 
-        Assert.isTrue(UpsertContractOnAwardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(opportunities[0]),'Swedish Opportunity should match Swedish Account');
-        Assert.isFalse(UpsertContractOnAwardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(opportunities[1]),'Norwegian Opportunity should not match Swedish Account');
+        Assert.isFalse(UpsertContractOnAwardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(opportunities[0]),'Norwegian Opportunity should not match Swedish Account');
+        Assert.isTrue(UpsertContractOnAwardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(opportunities[1]),'Swedish Opportunity should match Swedish Account');
     }
 
-    //TODO: Create 1 Account for each Opportunity if mocking does not work
     @IsTest
     static void shouldEnqueueServiceNowUploadContractsQueueable() {
         DML.isMockDML = true;
@@ -42,9 +43,10 @@ public with sharing class UpsertContractOnAwardedOpportunitiesTest {
         oldOpportunities[0].AccountId = accounts[0].Id;
         oldOpportunities[1].AccountId = accounts[1].Id;
         User u = new User(Id = UserInfo.getUserId(), Country = 'Sweden');
+        update u;
 
-        oldOpportunities[0].Owner = u;
-        oldOpportunities[1].Owner = u;
+        oldOpportunities[0].OwnerId = u.Id;
+        oldOpportunities[1].OwnerId = u.Id;
         oldOpportunities[0].New_or_Renewal__c = 'New';
         oldOpportunities[1].New_or_Renewal__c = 'New';
 
