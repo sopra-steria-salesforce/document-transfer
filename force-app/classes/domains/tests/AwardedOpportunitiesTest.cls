@@ -39,4 +39,41 @@ public with sharing class AwardedOpportunitiesTest {
 				'2 Opportunities should remain after filtering out newly awarded Opportunities'
 		);
 	}
+
+	@IsTest
+	static void testOpportunityOwnerCountryMatchesNavisionCustomerCountry(){
+		List<Opportunity> opportunities = TestDataFactory.createOpportunities(2,false,true);
+		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(opportunities);
+		Assert.isTrue(awardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(
+				new Account(Navision_Customer_NO__c=true),
+				new User(Country='Norway')
+		),
+				'Norwegian Opportunity should match Norwegian Account');
+		Assert.isFalse(awardedOpportunities.doesOpportunityOwnerCountryMatchNavisionCustomerCountry(
+				new Account(Navision_Customer_NO__c=true),
+				new User(Country='Sweden')
+		),
+				'Swedish Opportunity should not match Norwegian Account');
+	}
+
+	@IsTest
+	static void filterByMatchingOwnerCountry(){
+		List<Opportunity> opportunities = TestDataFactory.createOpportunities(2,false,true);
+		List<Account> parentAccounts = new List<Account>{
+				new Account(Navision_Customer_NO__c=true),
+				new Account(Navision_Customer_SE__c=true)
+		};
+		insert parentAccounts;
+		update new User(UserInfo.getUserId(), Country='Sweden');
+		for (Integer i; i< opportunities.size(); i++){
+			opportunities[i].OwnerId=UserInfo.getUserId();
+			opportunities[i].StageName=Opportunities.AWARDED;
+			opportunities[i].AccountId=parentAccounts[i].Id;
+		}
+
+		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(opportunities);
+		awardedOpportunities.filterByMatchingOwnerCountry();
+		Assert.areEqual(1, awardedOpportunities.getRecords().size(), 'Only 1 Awarded Opportunity Owner Matches Navision Country');
+		Assert.areEqual(opportunities[0].Id, awardedOpportunities.getRecords()[0].Id, 'Only 1 Awarded Opportunity Owner Matches Navision Country');
+	}
 }
