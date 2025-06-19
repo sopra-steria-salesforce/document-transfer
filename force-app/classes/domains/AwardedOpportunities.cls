@@ -21,6 +21,9 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		this.opportunities =awardedOpportunities;
 	}
 
+	/**
+	 * @description: Remove Opportunities where Owner Country does not match the Country that the Parent Account is registerd in Navision
+	 */
 	public AwardedOpportunities filterByMatchingOwnerCountry(){
 		List<Opportunity> opportunitiesWhereOwnerCountryMatchesNavisionCountry = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
