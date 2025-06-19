@@ -1,6 +1,4 @@
 public inherited sharing class AwardedOpportunities extends Opportunities{
-	private List<Opportunity> awardedOpportunities;
-
 	public AwardedOpportunities(List<Opportunity> opportunities) {
 		List<Opportunity> awardedOpportunities = new List<Opportunity>();
 		for (Opportunity opportunity : opportunities) {
@@ -8,7 +6,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				awardedOpportunities.add(opportunity);
 			}
 		}
-		this.awardedOpportunities=awardedOpportunities;
+		this.opportunities =awardedOpportunities;
 	}
 
 	public AwardedOpportunities(List<Opportunity> newOpportunities, List<Opportunity> oldOpportunities) {
@@ -20,7 +18,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				awardedOpportunities.add(newOpportunity);
 			}
 		}
-		this.awardedOpportunities=awardedOpportunities;
+		this.opportunities =awardedOpportunities;
 	}
 
 	public AwardedOpportunities filterByMatchingOwnerCountry(){
@@ -32,7 +30,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
 			}
 		}
-		this.awardedOpportunities=opportunitiesWhereOwnerCountryMatchesNavisionCountry;
+		this.opportunities =opportunitiesWhereOwnerCountryMatchesNavisionCountry;
 		return this;
 	}
 
