@@ -1,6 +1,12 @@
 public inherited sharing abstract class Opportunities {
 	protected List<Opportunity> opportunities;
 
+	//STAGENAME
+	public static final String PLANNING_0 = '0 - Planning';
+	public static final String OFFER_4 = '4 - Offer';
+	public static final String CLOSED_WON = 'Closed Won';
+	public static final String AWARDED = '5 - Awarded';
+
 	public List<Opportunity> getRecords(){
 		return this.opportunities;
 	}

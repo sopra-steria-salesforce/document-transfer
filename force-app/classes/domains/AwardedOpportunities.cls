@@ -4,7 +4,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 	public AwardedOpportunities(List<Opportunity> opportunities) {
 		List<Opportunity> awardedOpportunities = new List<Opportunity>();
 		for (Opportunity opportunity : opportunities) {
-			if (opportunity.StageName == Utils.AWARDED) {
+			if (opportunity.StageName == AWARDED) {
 				awardedOpportunities.add(opportunity);
 			}
 		}
@@ -16,7 +16,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>(oldOpportunities);
 		for (Opportunity newOpportunity : newOpportunities) {
 			Opportunity oldOpportunity = oldOpportunitiesByIds.get(newOpportunity.Id);
-			if (newOpportunity.StageName == Utils.AWARDED && newOpportunity.StageName!=oldOpportunity.StageName) {
+			if (newOpportunity.StageName == AWARDED && newOpportunity.StageName!=oldOpportunity.StageName) {
 				awardedOpportunities.add(newOpportunity);
 			}
 		}
@@ -28,7 +28,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		Map<Id, Account> parentAccountsByIds = getParentAccountByIds();
 		Map<Id, User> opportunityOwnerByIds = getOpportunityOwnersByIds();
 		for (Opportunity opportunity:this.opportunities){
-			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccountsByIds.get(opportunity.AccountId), opportunityOwnerByIds.get(opportunity.Id))) {
+			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccountsByIds.get(opportunity.AccountId), opportunityOwnerByIds.get(opportunity.OwnerId))) {
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
