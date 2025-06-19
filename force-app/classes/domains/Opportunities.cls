@@ -33,6 +33,10 @@ public inherited sharing abstract class Opportunities {
 		return this.opportunities.isEmpty();
 	}
 
+	public Integer size(){
+		return this.opportunities.size();
+	}
+
 	public Map<Id, Account> getParentAccountByIds(){
 		Set<Id> accountIds = new Set<Id>();
 		for (Opportunity opportunity:this.opportunities){
