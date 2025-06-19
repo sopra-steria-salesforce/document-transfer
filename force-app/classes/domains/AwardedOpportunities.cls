@@ -1,5 +1,5 @@
 public inherited sharing class AwardedOpportunities extends Opportunities{
-	public List<Opportunity> awardedOpportunities;
+	private List<Opportunity> awardedOpportunities;
 
 	public AwardedOpportunities(List<Opportunity> opportunities) {
 		List<Opportunity> awardedOpportunities = new List<Opportunity>();
@@ -23,30 +23,25 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		this.awardedOpportunities=awardedOpportunities;
 	}
 
-	public void filterByMatchingOwnerCountry(){
+	public AwardedOpportunities filterByMatchingOwnerCountry(){
 		List<Opportunity> opportunitiesWhereOwnerCountryMatchesNavisionCountry = new List<Opportunity>();
-		Map<Id, Account> parentAccountsByIds = getParentAccountByIdsFromChildOpportunities();
+		Map<Id, Account> parentAccountsByIds = getParentAccountByIds();
+		Map<Id, User> opportunityOwnerByIds = getOpportunityOwnersByIds();
 		for (Opportunity opportunity:this.opportunities){
-			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(opportunity, parentAccountsByIds.get(opportunity.AccountId))) {
+			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccountsByIds.get(opportunity.AccountId), opportunityOwnerByIds.get(opportunity.Id))) {
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
 			}
 		}
-		this.opportunities=opportunitiesWhereOwnerCountryMatchesNavisionCountry;
-	}
-	public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Opportunity opportunity, Account parentAccount){
-		return
-				opportunity.Owner.Country=='Norway' && parentAccount.Navision_Customer_NO__c ||
-						opportunity.Owner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
-						opportunity.Owner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
+		this.awardedOpportunities=opportunitiesWhereOwnerCountryMatchesNavisionCountry;
+		return this;
 	}
 
-	public Map<Id, Account> getParentAccountByIdsFromChildOpportunities(){
-		Set<Id> accountIds = new Set<Id>();
-		for (Opportunity opportunity:this.opportunities){
-			accountIds.add(opportunity.AccountId);
-		}
-		return new Map<Id, Account>([SELECT Navision_Customer_NO__c, Navision_Customer_DK__c, Navision_Customer_SE__c FROM Account WHERE Id IN: accountIds]);
+	public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Account parentAccount, User opportunityOwner){
+		return
+				opportunityOwner.Country=='Norway' && parentAccount.Navision_Customer_NO__c ||
+				opportunityOwner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
+				opportunityOwner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
 	}
 }
