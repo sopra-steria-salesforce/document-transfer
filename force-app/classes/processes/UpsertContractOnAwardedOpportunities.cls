@@ -12,10 +12,10 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 	}
 
 	public static void upsertContractOnNewAwardedOpportunities(AwardedOpportunities awardedOpportunities){
-		for (Opportunity opportunity:awardedOpportunities.awardedOpportunities){
+		for (Opportunity opportunity:awardedOpportunities.getRecords()){
 			if(
-					opportunity.New_Or_Renewal__c == 'New' &&
-					String.isBlank(opportunity.ContractServiceNowUrl__c)
+				opportunity.New_Or_Renewal__c == 'New' &&
+				String.isBlank(opportunity.ContractServiceNowUrl__c)
 			){
 				DML.enqueueJob(new ServiceNowUploadContractsQueueable(opportunity));
 				Logger.info('Contract is created in ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
