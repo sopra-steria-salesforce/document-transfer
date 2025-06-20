@@ -23,7 +23,7 @@ public with sharing class UpsertContractOnAwardedOpportunitiesTest {
 		UpsertContractOnAwardedOpportunities testUpsertContractOnAwardedOpportunities = new UpsertContractOnAwardedOpportunities();
 
 		Test.startTest();
-		testUpsertContractOnAwardedOpportunities.beforeUpdate(newOpportunities, oldOpportunities);
+		testUpsertContractOnAwardedOpportunities.afterUpdate(newOpportunities, oldOpportunities);
 		Test.stopTest();
 
 		Assert.isFalse(DML.enqueuedJobs.isEmpty(),'1 Queueable job should be queued');
@@ -52,7 +52,7 @@ public with sharing class UpsertContractOnAwardedOpportunitiesTest {
 		UpsertContractOnAwardedOpportunities testUpsertContractOnAwardedOpportunities = new UpsertContractOnAwardedOpportunities();
 
 		Test.startTest();
-		testUpsertContractOnAwardedOpportunities.beforeUpdate(newOpportunities, oldOpportunities);
+		testUpsertContractOnAwardedOpportunities.afterUpdate(newOpportunities, oldOpportunities);
 		Test.stopTest();
 
 		Assert.isTrue(DML.enqueuedJobs.isEmpty(),'No Queueable job should be queued');
