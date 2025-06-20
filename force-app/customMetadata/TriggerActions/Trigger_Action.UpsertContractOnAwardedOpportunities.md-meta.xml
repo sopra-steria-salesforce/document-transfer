@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>After_Update__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Opportunity</value>
     </values>
     <values>
         <field>Allow_Flow_Recursion__c</field>
@@ -36,7 +36,7 @@
     </values>
     <values>
         <field>Before_Update__c</field>
-        <value xsi:type="xsd:string">Opportunity</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Bypass_Execution__c</field>
@@ -48,7 +48,7 @@
     </values>
     <values>
         <field>Description__c</field>
-        <value xsi:type="xsd:string">When a new Opportunity is set to Awarded, if the Opportunity owner country matches the Navision Account Country --&gt; then a contract upsert request is sent to ServiceNow</value>
+        <value xsi:type="xsd:string">After a new Opportunity is set to Awarded, if the Opportunity owner country matches the Navision Account Country --&gt; then a contract upsert request is sent to ServiceNow</value>
     </values>
     <values>
         <field>Entry_Criteria__c</field>
