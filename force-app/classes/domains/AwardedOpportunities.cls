@@ -64,7 +64,8 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 
 	public void upsertContractToServiceNow(){
 		//TODO: Bulkify - CIS-105
-		for (Opportunity opportunity:this.opportunities){
+		List<Opportunity> clonedOpportunities = this.opportunities.deepClone(true); //Need to clone to prevent "Record is read-only" error in Queueable due to being After Update context.
+		for (Opportunity opportunity:clonedOpportunities){
 			DML.enqueueJob(new ServiceNowUploadContractsQueueable(opportunity));
 		}
 	}
