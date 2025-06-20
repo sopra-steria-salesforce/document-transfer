@@ -5,7 +5,7 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 
 		AwardedOpportunities newlyAwardedOpportunities = new AwardedOpportunities(newOpportunities, oldOpportunities);
 		newlyAwardedOpportunities.filterByMatchingOwnerCountry();
-		newlyAwardedOpportunities.getNewOpportunitiesWithNoContractInServiceNow();
+		newlyAwardedOpportunities.filterNewOpportunitiesWithoutContracts();
 		if (!newlyAwardedOpportunities.isEmpty()) {
 			new AwardedOpportunities(newlyAwardedOpportunities.getRecords()).upsertContractToServiceNow();
 		}

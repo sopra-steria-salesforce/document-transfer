@@ -35,7 +35,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		return this;
 	}
 
-	public AwardedOpportunities getNewOpportunitiesWithNoContractInServiceNow(){
+	public AwardedOpportunities filterNewOpportunitiesWithoutContracts(){
 		List<Opportunity> opportunitiesWithNoContractInServiceNow = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
 			if(
