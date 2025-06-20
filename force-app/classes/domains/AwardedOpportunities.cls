@@ -1,24 +1,22 @@
 public inherited sharing class AwardedOpportunities extends Opportunities{
 	public AwardedOpportunities(List<Opportunity> opportunities) {
-		List<Opportunity> awardedOpportunities = new List<Opportunity>();
+		this.opportunities = new List<Opportunity>();
 		for (Opportunity opportunity : opportunities) {
 			if (opportunity.StageName == AWARDED) {
-				awardedOpportunities.add(opportunity);
+				this.opportunities.add(opportunity);
 			}
 		}
-		this.opportunities =awardedOpportunities;
 	}
 
 	public AwardedOpportunities(List<Opportunity> newOpportunities, List<Opportunity> oldOpportunities) {
-		List<Opportunity> awardedOpportunities = new List<Opportunity>();
+		this.opportunities = new List<Opportunity>();
 		Map<Id, Opportunity> oldOpportunitiesByIds = new Map<Id, Opportunity>(oldOpportunities);
 		for (Opportunity newOpportunity : newOpportunities) {
 			Opportunity oldOpportunity = oldOpportunitiesByIds.get(newOpportunity.Id);
 			if (newOpportunity.StageName == AWARDED && newOpportunity.StageName!=oldOpportunity.StageName) {
-				awardedOpportunities.add(newOpportunity);
+				this.opportunities.add(newOpportunity);
 			}
 		}
-		this.opportunities=awardedOpportunities;
 	}
 
 	/**
