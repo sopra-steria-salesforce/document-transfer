@@ -44,12 +44,10 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 			){
 				opportunitiesWithNoContractInServiceNow.add(opportunity);
 				Logger.info('Contract is created in ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
-				Logger.resumeSaving();
 			} else {
 				Logger.info('Contract is not created is ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
 				Logger.info('New or renewal: ' + opportunity.New_Or_Renewal__c).addTag('Opportunity trigger handler service');
 				Logger.info('Service Now contract url: ' + opportunity.ContractServiceNowUrl__c).addTag('Opportunity trigger handler service');
-				Logger.resumeSaving();
 			}
 		}
 		if (!this.isEmpty()) {
