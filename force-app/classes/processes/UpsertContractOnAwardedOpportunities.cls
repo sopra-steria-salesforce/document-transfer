@@ -7,7 +7,7 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 		newlyAwardedOpportunities.filterByMatchingOwnerCountry();
 		newlyAwardedOpportunities.filterNewOpportunitiesWithoutContracts();
 		if (!newlyAwardedOpportunities.isEmpty()) {
-			new AwardedOpportunities(newlyAwardedOpportunities.getRecords()).upsertContractToServiceNow();
+			newlyAwardedOpportunities.upsertContractToServiceNow();
 		}
 	}
 }
