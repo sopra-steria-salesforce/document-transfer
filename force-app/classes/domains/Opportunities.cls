@@ -16,7 +16,7 @@ public inherited sharing abstract class Opportunities {
 			}
 			return parentAccountsByIds;
 		}
-		private set;
+		set;
 	}
 
 	public Map<Id, User> opportunityOwnersByIds {
