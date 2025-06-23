@@ -17,9 +17,15 @@ public with sharing class UpsertContractOnNavisionChange implements TriggerActio
 				AND AccountId IN :navisionAccountsWithCountryChange.getAccountIds()
 			]
 		);
+		if (awardedOpportunitiesWithNoContract.isEmpty()) return;
+
 		awardedOpportunitiesWithNoContract.parentAccountsByIds=new Map<Id, Account>(newAccounts);
-		awardedOpportunitiesWithNoContract.filterByMatchingOwnerCountry().
-				     		 filterNewOpportunitiesWithoutContracts().
-							 upsertContractToServiceNow();
+		awardedOpportunitiesWithNoContract
+				.filterByMatchingOwnerCountry()
+				.filterNewOpportunitiesWithoutContracts();
+
+		if (!awardedOpportunitiesWithNoContract.isEmpty()){
+			awardedOpportunitiesWithNoContract.upsertContractToServiceNow();
+		}
 	}
 }
