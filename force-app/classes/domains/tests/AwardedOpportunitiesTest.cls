@@ -87,7 +87,7 @@ public with sharing class AwardedOpportunitiesTest {
 		opportunities[0].StageName=Utils.AWARDED;
 		opportunities[1].StageName=Utils.AWARDED;
 		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(opportunities);
-		awardedOpportunities.getNewOpportunitiesWithNoContractInServiceNow();
+		awardedOpportunities.filterNewOpportunitiesWithoutContracts();
 		Assert.areEqual(1, awardedOpportunities.size(), 'Only 1 New Opportunity should remain');
 		Assert.areEqual(opportunities[1].Id, awardedOpportunities.getRecords()[0].Id,'Only the Opportunity without Contract ServiceNow URL should remain');
 	}
