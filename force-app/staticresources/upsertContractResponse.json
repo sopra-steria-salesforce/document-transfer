@@ -1,0 +1,10 @@
+{
+	"result": {
+		"result": "success",
+		"contract_sys_id": "TestSysId",
+		"internal_contract_number": "TestInternalNumber",
+		"task_sys_id": "TestTaskSysId",
+		"task_number": "TestTaskNumber",
+		"relationship_sys_id": "TestRelationshipSysId"
+	}
+}

@@ -9,8 +9,8 @@ public with sharing class UpsertContractOnNavisionChange implements TriggerActio
 			[
 				SELECT Id, AccountId, OwnerId, StageName, New_or_Renewal__c, ContractServiceNowUrl__c,
 						Owner_Country__c, Account.Navision_Customer_NO__c,
-						Account.Navision_Customer_SE__c,
-						Account.Navision_Customer_DK__c
+						Account.Navision_Customer_SE__c, Account.Navision_Customer_DK__c,
+						Contract_Category__c, Name
 				FROM Opportunity
 				WHERE StageName = :Opportunities.AWARDED
 				AND IsContractSent__c=FALSE
