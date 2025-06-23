@@ -5,7 +5,7 @@ public with sharing class UpsertContractOnNavisionChange implements TriggerActio
 		NavisionAccounts navisionAccountsWithCountryChange = new NavisionAccounts(newAccounts).filterAccountsWithNavisionCountryPositiveChange(oldAccounts);
 		if (navisionAccountsWithCountryChange.getAccounts().isEmpty()) return;
 
-		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(
+		AwardedOpportunities awardedOpportunitiesWithNoContract = new AwardedOpportunities(
 			[
 				SELECT Id, AccountId, OwnerId, StageName, New_or_Renewal__c, ContractServiceNowUrl__c,
 						Owner_Country__c, Account.Navision_Customer_NO__c,
@@ -13,11 +13,12 @@ public with sharing class UpsertContractOnNavisionChange implements TriggerActio
 						Account.Navision_Customer_DK__c
 				FROM Opportunity
 				WHERE StageName = :Opportunities.AWARDED
+				AND IsContractSent__c=FALSE
 				AND AccountId IN :navisionAccountsWithCountryChange.getAccountIds()
 			]
 		);
-		awardedOpportunities.parentAccountsByIds=new Map<Id, Account>(newAccounts);
-		awardedOpportunities.filterByMatchingOwnerCountry().
+		awardedOpportunitiesWithNoContract.parentAccountsByIds=new Map<Id, Account>(newAccounts);
+		awardedOpportunitiesWithNoContract.filterByMatchingOwnerCountry().
 				     		 filterNewOpportunitiesWithoutContracts().
 							 upsertContractToServiceNow();
 	}

@@ -39,5 +39,4 @@ public with sharing class TestUpsertContractOnNavisionChange {
 		Assert.isFalse(DML.enqueuedJobs.isEmpty(),'1 Queueable job should be queued');
 		Assert.isInstanceOfType(DML.enqueuedJobs[0],ServiceNowUploadContractsQueueable.class, 'ServiceNowUploadContractsQueueable should be queued');
 	}
-
 }
