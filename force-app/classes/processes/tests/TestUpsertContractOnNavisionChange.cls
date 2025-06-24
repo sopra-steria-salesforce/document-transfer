@@ -47,7 +47,7 @@ public with sharing class TestUpsertContractOnNavisionChange {
 
 	@IsTest
 	static void navisionCustomerUpdatesShouldTriggerContractCreationForAwardedOpportunitiesWithNoContract(){
-		TestingUtils.setJSONSuccessfullRequest('upsertContractResponse');
+		TestingUtils.setJSONSuccessfulRequest('upsertContractResponse');
 
 		List<Opportunity> awardedOpportunities = [SELECT Id, AccountId FROM Opportunity];
 
@@ -62,10 +62,9 @@ public with sharing class TestUpsertContractOnNavisionChange {
 		Assert.isFalse([SELECT IsContractSent__c FROM Opportunity WHERE Id=:awardedOpportunities[1].Id].IsContractSent__c,'Contract for Swedish Account should not be upserted');
 	}
 
-
 	@IsTest
-	static void navisionCustomerUpdatesShouldTriggerCallOffContractCreationForAwardedOpportunitiesWithNoContract(){
-		TestingUtils.setJSONSuccessfullRequest('upsertCallOffContractsresponse');
+	static void navisionCustomerUpdatesShouldTriggerCallOffContractCreation(){
+		TestingUtils.setJSONSuccessfulRequest('upsertCallOffContractsresponse');
 
 		Contract_Archive__c testContractArchive = new Contract_Archive__c(Name = 'Test Contract Archive', Sys_Id_External__c = 'TestTaskSysId');
 		insert testContractArchive;

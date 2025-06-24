@@ -29,7 +29,7 @@ public with sharing class TestingUtils {
 		insert new List<SObject>{setupEntityAccess, permissionSetAssignment};
 	}
 
-	public static void setJSONSuccessfullRequest(String staticResourceName){
+	public static void setJSONSuccessfulRequest(String staticResourceName){
 		StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
 		mock.setHeader('Content-Type', 'application/json');
 		mock.setStatusCode(200);
