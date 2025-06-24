@@ -12,7 +12,7 @@ public with sharing class UpsertContractOnNavisionChange implements TriggerActio
 						Contract_Category__c, Name, Contract_Lookup__c, Sub_Area__c
 				FROM Opportunity
 				WHERE StageName = :Opportunities.AWARDED
-				AND ContractServiceNowUrl__c=''
+				AND IsContractSent__c=FALSE
 				AND New_or_Renewal__c='New'
 				AND AccountId IN :navisionAccountsWithCountryChange.getAccountIds()
 			]
