@@ -8,7 +8,7 @@
     </values>
     <values>
         <field>After_Insert__c</field>
-        <value xsi:type="xsd:string">Account</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>After_Undelete__c</field>
@@ -16,7 +16,7 @@
     </values>
     <values>
         <field>After_Update__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Account</value>
     </values>
     <values>
         <field>Allow_Flow_Recursion__c</field>
