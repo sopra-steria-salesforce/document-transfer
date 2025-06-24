@@ -3,7 +3,7 @@
         {
             "path": "force-app",
             "package": "document-transfer",
-            "versionNumber": "0.7.0.NEXT",
+            "versionNumber": "0.8.0.NEXT",
             "versionDescription": "Handles document transfer logic, logging, and integration support.",
             "default": true,
             "seedMetadata": {
