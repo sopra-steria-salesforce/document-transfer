@@ -29,26 +29,30 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
             ]
             .Owner.Username.replace('.uat', '');
 
-        try {
-            Opportunity opportunity = opportunities.remove(0);
-            if (opportunity.Contract_Category__c == 'New contract (not connected to framework/capacity agreement)') {
-                Logger.debug('Opportunity with new contract (not connected to framework/capacity agreement)', opportunity);
-                uploadNewContract(opportunity);
-            } else if (opportunity.Contract_Category__c == 'Change to an active call off or contract' || opportunity.Contract_Category__c == 'New call off (Agreement on existing contract)') {
-                Logger.debug('Opportunity upload existing contact', opportunity);
-                uploadExistingContract(opportunity);
-            }
+        if (opportunities != null && !opportunities.isEmpty()) {
+            try {
+                Opportunity opportunity = opportunities.remove(0);
+                if (opportunity.Contract_Category__c == 'New contract (not connected to framework/capacity agreement)') {
+                    Logger.debug('Opportunity with new contract (not connected to framework/capacity agreement)', opportunity);
+                    uploadNewContract(opportunity);
+                } else if (opportunity.Contract_Category__c == 'Change to an active call off or contract' || opportunity.Contract_Category__c == 'New call off (Agreement on existing contract)') {
+                    Logger.debug('Opportunity upload existing contact', opportunity);
+                    uploadExistingContract(opportunity);
+                }
 
-            System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
-        } catch (Exception ex) {
-            // Log to Application_Log__c using the existing method
-            Logger.error('Exception occurred during contract upload.', opportunity.Id, ex).addTag('Upload contracts queueable');
-            Logger.saveLog();
-            // Throw appropriate exception based on context
-            if (System.isBatch() || System.isQueueable() || System.isFuture()) {
-                throw new ContractUploadException(ex.getMessage());
-            } else {
-                throw new AuraHandledException(ex.getMessage());
+                if (!opportunities.isEmpty()) {
+                    System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
+                }
+            } catch (Exception ex) {
+                // Log to Application_Log__c using the existing method
+                Logger.error('Exception occurred during contract upload.', opportunity.Id, ex).addTag('Upload contracts queueable');
+                Logger.saveLog();
+                // Throw appropriate exception based on context
+                if (System.isBatch() || System.isQueueable() || System.isFuture()) {
+                    throw new ContractUploadException(ex.getMessage());
+                } else {
+                    throw new AuraHandledException(ex.getMessage());
+                }
             }
         }
     }
