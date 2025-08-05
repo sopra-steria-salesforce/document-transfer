@@ -3,6 +3,7 @@
  */
 
 public with sharing class ServiceNowUploadContractsQueueable implements Queueable, Database.AllowsCallouts {
+    private List<Opportunity> opportunities;
     private Opportunity opportunity;
     static String contract_sys_id;
     static String internal_contract_number;
