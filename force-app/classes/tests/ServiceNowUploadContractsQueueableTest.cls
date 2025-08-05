@@ -31,6 +31,8 @@ public class ServiceNowUploadContractsQueueableTest {
     static void testUploadNewContract() {
         List<Opportunity> opportunities = [SELECT Id, Name, Type, CloseDate, Contract_Category__c, AccountId FROM Opportunity LIMIT 1];
 
+        System.assertNotEquals(null, opportunities, 'Opportunities list should not be null');
+
         for (Opportunity opp : opportunities) {
             opp.Type = 'Project';
             opp.Contract_Category__c = 'New contract (not connected to framework/capacity agreement)';
@@ -56,6 +58,8 @@ public class ServiceNowUploadContractsQueueableTest {
     @isTest
     static void testUploadExistingContract() {
         List<Opportunity> opportunities = [SELECT Id, Name, CloseDate, Sub_Area__c, Contract_Category__c FROM Opportunity LIMIT 1];
+
+        System.assertNotEquals(null, opportunities, 'Opportunities list should not be null');
 
         for (Opportunity opp : opportunities) {
             opp.Type = 'Project';
