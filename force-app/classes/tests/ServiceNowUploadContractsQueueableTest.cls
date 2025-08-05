@@ -44,9 +44,12 @@ public class ServiceNowUploadContractsQueueableTest {
         Test.stopTest();
 
         // Verify the contract upload process
-        List<Opportunity> updatedOpportunity = [SELECT Id, Contract_Lookup__c, CloseDate, IsContractSent__c, ContractServiceNowUrl__c FROM Opportunity WHERE Id = :opportunity.Id];
-        //        System.assert(updatedOpportunity.IsContractSent__c, 'Contract should be marked as sent');
-        //        System.assertNotEquals(null, updatedOpportunity.ContractServiceNowUrl__c, 'ContractServiceNowUrl should be populated');
+        List<Opportunity> updatedOpportunities = [SELECT Id, Contract_Lookup__c, CloseDate, IsContractSent__c, ContractServiceNowUrl__c FROM Opportunity WHERE Id = :opportunity.Id];
+
+        for (Opportunity updatedOpportunity : updatedOpportunities) {
+            // System.assert(updatedOpportunity.IsContractSent__c, 'Contract should be marked as sent');
+            // System.assertNotEquals(null, updatedOpportunity.ContractServiceNowUrl__c, 'ContractServiceNowUrl should be populated');
+        }
     }
 
     @isTest
@@ -68,7 +71,7 @@ public class ServiceNowUploadContractsQueueableTest {
         Test.stopTest();
 
         // Verify the contract upload process
-        List<Opportunity> updatedOpportunity = [SELECT Id, CloseDate, Contract_Lookup__c, IsContractSent__c, ContractServiceNowUrl__c FROM Opportunity WHERE Id = :opportunity.Id];
+        List<Opportunity> updatedOpportunities = [SELECT Id, CloseDate, Contract_Lookup__c, IsContractSent__c, ContractServiceNowUrl__c FROM Opportunity WHERE Id = :opportunity.Id];
         for (Opportunity updatedOpportunity : updatedOpportunities) {
             System.assert(updatedOpportunity.IsContractSent__c, 'Contract should be marked as sent');
             //  System.assertNotEquals(null, updatedOpportunity.ContractServiceNowUrl__c, 'ContractServiceNowUrl should be populated');
