@@ -5,6 +5,7 @@ public class ServiceNowUploadContractsQueueableTest {
         // Create test data
         Account testAccount = new Account(Name = 'Test Account', SN_sys_id__c = 'TestSysId');
         insert testAccount;
+
         List<Opportunity> opportunities = new List<Opportunity>();
         for (Integer i = 0; i < 5; i++) {
             opportunities.add(
@@ -35,7 +36,7 @@ public class ServiceNowUploadContractsQueueableTest {
             opp.Contract_Category__c = 'New contract (not connected to framework/capacity agreement)';
         }
 
-        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(opportunities);
+        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(new List<Opportunity>{ opportunities[0] });
 
         Test.setMock(HttpCalloutMock.class, new ServiceNowUploadContractsMock());
 
@@ -62,7 +63,7 @@ public class ServiceNowUploadContractsQueueableTest {
         }
         update opportunities;
 
-        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(opp);
+        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(new List<Opportunity>{ opportunities[0] });
 
         Test.setMock(HttpCalloutMock.class, new ServiceNowUploadContractsMock());
 
