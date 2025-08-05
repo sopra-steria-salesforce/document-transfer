@@ -3,7 +3,6 @@
  * Handles the button click to upload contracts to ServiceNow
  */
 public with sharing class ServiceNowUploadContractsController {
-    
     /**
      * Initiates the contract upload process for the specified opportunity
      * @param opportunityId The ID of the opportunity to process
@@ -13,7 +12,7 @@ public with sharing class ServiceNowUploadContractsController {
     public static ResponseWrapper uploadContractToServiceNow(Id opportunityId) {
         ResponseWrapper response = new ResponseWrapper();
         Logger.debug('OpportunityId', opportunityId);
-        
+
         try {
             // Check if a process is already running
             if (ServiceNowUploadContractsQueueable.isContractUploadProcessStarted) {
@@ -21,32 +20,34 @@ public with sharing class ServiceNowUploadContractsController {
                 response.message = 'A contract upload process is already in progress. Please wait for it to complete.';
                 return response;
             }
-            
+
             // Get the opportunity record
-            Opportunity opp = [
+            List<Opportunity> opportunities = [
                 SELECT Id, Name, Contract_Category__c, AccountId, Sub_Area__c, Contract_Lookup__c
-                FROM Opportunity 
+                FROM Opportunity
                 WHERE Id = :opportunityId
                 LIMIT 1
             ];
-            
+
             // Validate opportunity has required fields
-            if (String.isBlank(opp.Contract_Category__c)) {
-                response.success = false;
-                response.message = 'Contract Category is required to upload contracts to ServiceNow.';
-                return response;
+            for (Opportunity opp : opportunities) {
+                if (String.isBlank(opp.Contract_Category__c)) {
+                    response.success = false;
+                    response.message = 'Contract Category is required to upload contracts to ServiceNow.';
+                    return response;
+                }
             }
-            
+
             // Enqueue the job
-            System.enqueueJob(new ServiceNowUploadContractsQueueable(opp));
-            
+            System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
+
             response.success = true;
             response.message = 'Contract upload process has been initiated. You will be notified when complete.';
         } catch (Exception ex) {
             response.success = false;
             Logger.error('Exception occurred during button click', ex).addTag('Upload contracts controller');
             Logger.saveLog();
-            
+
             response.message = ex.getMessage();
         } finally {
             Logger.saveLog();
@@ -55,14 +56,16 @@ public with sharing class ServiceNowUploadContractsController {
         Logger.saveLog();
         return response;
     }
-    
+
     /**
      * Wrapper class for the response
      */
     public class ResponseWrapper {
-        @AuraEnabled public Boolean success;
-        @AuraEnabled public String message;
-        
+        @AuraEnabled
+        public Boolean success;
+        @AuraEnabled
+        public String message;
+
         public ResponseWrapper() {
             this.success = false;
             this.message = '';
