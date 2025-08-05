@@ -30,7 +30,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
             .Owner.Username.replace('.uat', '');
 
         try {
-            Opportunity opportunity = opportunities.remove[0];
+            Opportunity opportunity = opportunities.remove(0);
             if (opportunity.Contract_Category__c == 'New contract (not connected to framework/capacity agreement)') {
                 Logger.debug('Opportunity with new contract (not connected to framework/capacity agreement)', opportunity);
                 uploadNewContract(opportunity);
