@@ -36,7 +36,7 @@ public class ServiceNowUploadContractsQueueableTest {
             opp.Contract_Category__c = 'New contract (not connected to framework/capacity agreement)';
         }
 
-        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(new List<Opportunity>{ opportunities[0] });
+        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(opportunities);
 
         Test.setMock(HttpCalloutMock.class, new ServiceNowUploadContractsMock());
 
@@ -63,7 +63,7 @@ public class ServiceNowUploadContractsQueueableTest {
         }
         update opportunities;
 
-        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(new List<Opportunity>{ opportunities[0] });
+        ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(opportunities);
 
         Test.setMock(HttpCalloutMock.class, new ServiceNowUploadContractsMock());
 
