@@ -49,6 +49,12 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Logger.debug('Opportunity upload existing contact', opportunity);
         uploadExistingContract(opportunity);
       }
+      
+      if (!opportunities.isEmpty()) {
+            System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
+        }
+
+    
     } catch (Exception ex) {
       // Log to Application_Log__c using the existing method
       Logger.error('Exception occurred during contract upload.', opportunity.Id,  ex).addTag('Upload contracts queueable');
