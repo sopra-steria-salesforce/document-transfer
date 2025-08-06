@@ -4,7 +4,6 @@
 
 public with sharing class ServiceNowUploadContractsQueueable implements Queueable, Database.AllowsCallouts {
     private List<Opportunity> opportunities;
-    private Opportunity opportunity;
     static String contract_sys_id;
     static String internal_contract_number;
     static String relationship_sys_id;
@@ -20,6 +19,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     }
 
     public void execute(QueueableContext param1) {
+        Opportunity opportunity = opportunities.remove(0);
         Logger.info('opportunity', opportunity).addTag('Upload contracts queueable');
         isContractUploadProcessStarted = true;
         truncatedUsername = [
@@ -36,6 +36,10 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
             } else if (opportunity.Contract_Category__c == 'Change to an active call off or contract' || opportunity.Contract_Category__c == 'New call off (Agreement on existing contract)') {
                 Logger.debug('Opportunity upload existing contact', opportunity);
                 uploadExistingContract(opportunity);
+            }
+
+            if (!opportunities.isEmpty()) {
+                System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
             }
         } catch (Exception ex) {
             // Log to Application_Log__c using the existing method
