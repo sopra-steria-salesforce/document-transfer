@@ -41,8 +41,8 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		List<Opportunity> opportunitiesWithNoContractInServiceNow = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
 			if(
-					opportunity.New_Or_Renewal__c == 'New' &&
-							String.isBlank(opportunity.ContractServiceNowUrl__c)
+				opportunity.New_Or_Renewal__c == 'New' &&
+				String.isBlank(opportunity.ContractServiceNowUrl__c)
 			){
 				opportunitiesWithNoContractInServiceNow.add(opportunity);
 				Logger.info('Contract is created in ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
@@ -71,7 +71,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 	public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Account parentAccount, User opportunityOwner){
 		return
 				opportunityOwner.Country=='Norway' && parentAccount.Navision_Customer_NO__c ||
-						opportunityOwner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
-						opportunityOwner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
+				opportunityOwner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
+				opportunityOwner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
 	}
 }
