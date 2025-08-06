@@ -56,6 +56,7 @@ public class ServiceNowUploadContractsQueueableTest {
     @isTest
     static void testUploadExistingContract() {
         List<Opportunity> opportunities = [SELECT Id, Name, CloseDate, Sub_Area__c, Contract_Category__c FROM Opportunity LIMIT 1];
+        System.debug('Opportunities before modifying: ' + opportunities);
 
         for (Opportunity opp : opportunities) {
             opp.Type = 'Project';
@@ -64,7 +65,7 @@ public class ServiceNowUploadContractsQueueableTest {
         update opportunities;
 
         ServiceNowUploadContractsQueueable queueable = new ServiceNowUploadContractsQueueable(opportunities);
-
+        System.debug('Queueable job is being enqueued with opportunities: ' + opportunities);
         Test.setMock(HttpCalloutMock.class, new ServiceNowUploadContractsMock());
 
         Test.startTest();
@@ -73,7 +74,9 @@ public class ServiceNowUploadContractsQueueableTest {
 
         // Verify the contract upload process
         List<Opportunity> updatedOpportunities = [SELECT Id, CloseDate, Contract_Lookup__c, IsContractSent__c, ContractServiceNowUrl__c FROM Opportunity WHERE Id IN :opportunities];
+        System.debug('Updated Opportunities after job execution: ' + updatedOpportunities);
         for (Opportunity updatedOpportunity : updatedOpportunities) {
+            System.debug('UpdatedOpportunities', updatedOpportunities);
             System.assert(updatedOpportunity.IsContractSent__c, 'Contract should be marked as sent');
             //  System.assertNotEquals(null, updatedOpportunity.ContractServiceNowUrl__c, 'ContractServiceNowUrl should be populated');
         }
