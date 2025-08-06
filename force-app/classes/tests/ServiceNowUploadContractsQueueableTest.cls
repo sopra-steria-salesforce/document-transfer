@@ -76,7 +76,6 @@ public class ServiceNowUploadContractsQueueableTest {
         List<Opportunity> updatedOpportunities = [SELECT Id, CloseDate, Contract_Lookup__c, IsContractSent__c, ContractServiceNowUrl__c FROM Opportunity WHERE Id IN :opportunities];
         System.debug('Updated Opportunities after job execution: ' + updatedOpportunities);
         for (Opportunity updatedOpportunity : updatedOpportunities) {
-            System.debug('UpdatedOpportunities', updatedOpportunities);
             System.assert(updatedOpportunity.IsContractSent__c, 'Contract should be marked as sent');
             //  System.assertNotEquals(null, updatedOpportunity.ContractServiceNowUrl__c, 'ContractServiceNowUrl should be populated');
         }
