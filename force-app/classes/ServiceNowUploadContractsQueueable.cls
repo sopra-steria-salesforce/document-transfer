@@ -3,47 +3,55 @@
  */
 
 public with sharing class ServiceNowUploadContractsQueueable implements Queueable, Database.AllowsCallouts {
-    private List<Opportunity> opportunities;
+    private Opportunity opportunity;
     static String contract_sys_id;
     static String internal_contract_number;
     static String relationship_sys_id;
     static String task_sys_id;
     static String task_number;
     static String url;
-    static Map<String, String> country2LegalOwner = new Map<String, String>{ 'Norway' => 'Sopra Steria Norway', 'Sweden' => 'Sopra Steria Sweden', 'Denmark' => 'Sopra Steria Denmark' };
+    static Map<String, String> country2LegalOwner = new Map<String, String>{
+            'Norway' => 'Sopra Steria Norway',
+            'Sweden' => 'Sopra Steria Sweden',
+            'Denmark' => 'Sopra Steria Denmark'
+    };
     static String truncatedUsername;
     public static Boolean isContractUploadProcessStarted = false;
 
-    public ServiceNowUploadContractsQueueable(List<Opportunity> opportunities) {
-        this.opportunities = opportunities;
+    public ServiceNowUploadContractsQueueable(Opportunity opportunity) {
+        this.opportunity = opportunity;
     }
 
     public void execute(QueueableContext param1) {
-        Opportunity opportunity = opportunities.remove(0);
+
         Logger.info('opportunity', opportunity).addTag('Upload contracts queueable');
         isContractUploadProcessStarted = true;
         truncatedUsername = [
                 SELECT Id, Owner.Username
                 FROM Opportunity
                 WHERE Id = :opportunity.Id
-            ]
-            .Owner.Username.replace('.uat', '');
+        ]
+                .Owner.Username.replace('.uat', '');
 
         try {
-            if (opportunity.Contract_Category__c == 'New contract (not connected to framework/capacity agreement)') {
+            if (
+                    opportunity.Contract_Category__c ==
+                            'New contract (not connected to framework/capacity agreement)'
+            ) {
                 Logger.debug('Opportunity with new contract (not connected to framework/capacity agreement)', opportunity);
                 uploadNewContract(opportunity);
-            } else if (opportunity.Contract_Category__c == 'Change to an active call off or contract' || opportunity.Contract_Category__c == 'New call off (Agreement on existing contract)') {
+            } else if (
+                    opportunity.Contract_Category__c ==
+                            'Change to an active call off or contract' ||
+                            opportunity.Contract_Category__c ==
+                                    'New call off (Agreement on existing contract)'
+            ) {
                 Logger.debug('Opportunity upload existing contact', opportunity);
                 uploadExistingContract(opportunity);
             }
-
-            if (!opportunities.isEmpty()) {
-                System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
-            }
         } catch (Exception ex) {
             // Log to Application_Log__c using the existing method
-            Logger.error('Exception occurred during contract upload.', opportunity.Id, ex).addTag('Upload contracts queueable');
+            Logger.error('Exception occurred during contract upload.', opportunity.Id,  ex).addTag('Upload contracts queueable');
             Logger.saveLog();
             // Throw appropriate exception based on context
             if (System.isBatch() || System.isQueueable() || System.isFuture()) {
@@ -59,7 +67,11 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         OuterWrapper outerWrapper = createNewContracts(opportunity);
         Logger.info('outerWrapper new contact ' + outerWrapper).addTag('Upload contracts queueable');
         Contract_Archive__c archive = createNewContractArchive(opportunity);
-        Account_Contract_Archive_Junction__c junction = createJunction(archive.Id, internal_contract_number, opportunity);
+        Account_Contract_Archive_Junction__c junction = createJunction(
+                archive.Id,
+                internal_contract_number,
+                opportunity
+        );
         updateOpportunity(archive.Id, junction.Id, null, opportunity, outerWrapper);
         Logger.saveLog();
     }
@@ -68,29 +80,43 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Logger.info('Opportunity', opportunity).addTag('Upload contracts queueable');
         OuterWrapper outerWrapper = createExistingContracts(opportunity);
         Call_Off_Contract__c callOff = createCallOff(opportunity, outerWrapper);
-        updateOpportunity(null, null, calloff != null ? callOff.Id : null, opportunity, outerWrapper);
+        updateOpportunity(
+                null,
+                null,
+                calloff != null ? callOff.Id : null,
+                opportunity,
+                outerWrapper
+        );
         Logger.debug('calloff', callOff).addTag('Upload contracts queueable');
         Logger.debug('outerWrapper existing contarct ' + outerWrapper).addTag('Upload contracts queueable');
         Logger.saveLog();
     }
 
-    private static NewContractBody prepareBodyForCreateNewContracts(Opportunity opportunity) {
-        NewContractBody requestBody = new NewContractBody(opportunity.Id, opportunity.Contract_Category__c, truncatedUsername);
+    private static NewContractBody prepareBodyForCreateNewContracts(
+            Opportunity opportunity
+    ) {
+        NewContractBody requestBody = new NewContractBody(
+                opportunity.Id,
+                opportunity.Contract_Category__c,
+                truncatedUsername
+        );
         return requestBody;
     }
 
-    private static UpdateExistingContractBody prepareBodyForCreateExistingContracts(Opportunity opportunity) {
+    private static UpdateExistingContractBody prepareBodyForCreateExistingContracts(
+            Opportunity opportunity
+    ) {
         Opportunity currentOpportunity = [
-            SELECT Id, Contract_Lookup__r.Sys_Id_External__c
-            FROM Opportunity
-            WHERE Id = :opportunity.Id
+                SELECT Id, Contract_Lookup__r.Sys_Id_External__c
+                FROM Opportunity
+                WHERE Id = :opportunity.Id
         ];
         UpdateExistingContractBody requestBody = new UpdateExistingContractBody(
-            opportunity.Id,
-            opportunity.Contract_Category__c,
-            truncatedUsername,
-            currentOpportunity.Contract_Lookup__r.Sys_Id_External__c,
-            String.isNotBlank(opportunity.Sub_Area__c) ? opportunity.Sub_Area__c : ''
+                opportunity.Id,
+                opportunity.Contract_Category__c,
+                truncatedUsername,
+                currentOpportunity.Contract_Lookup__r.Sys_Id_External__c,
+                String.isNotBlank(opportunity.Sub_Area__c) ? opportunity.Sub_Area__c : ''
         );
         Logger.debug('requestBody' + requestBody).addTag('Upload contracts queueable');
         return requestBody;
@@ -99,10 +125,10 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     private static OuterWrapper createExistingContracts(Opportunity opportunity) {
         try {
             HttpResponse response = Utils.doRequest(
-                Utils.NAMED_CREDENTIAL_SERVICE_NOW,
-                Utils.API_UPDATE_EXISTING_CONTRACTS,
-                Utils.METHOD_PATCH,
-                JSON.serialize(prepareBodyForCreateExistingContracts(opportunity))
+                    Utils.NAMED_CREDENTIAL_SERVICE_NOW,
+                    Utils.API_UPDATE_EXISTING_CONTRACTS,
+                    Utils.METHOD_PATCH,
+                    JSON.serialize(prepareBodyForCreateExistingContracts(opportunity))
             );
             Logger.debug('response' + response).addTag('Upload contracts queueable');
 
@@ -123,10 +149,10 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Logger.info('Opportunity', opportunity);
         try {
             HttpResponse response = Utils.doRequest(
-                Utils.NAMED_CREDENTIAL_SERVICE_NOW,
-                Utils.API_CREATE_NEW_CONTRACTS,
-                Utils.METHOD_POST,
-                JSON.serialize(prepareBodyForCreateNewContracts(opportunity))
+                    Utils.NAMED_CREDENTIAL_SERVICE_NOW,
+                    Utils.API_CREATE_NEW_CONTRACTS,
+                    Utils.METHOD_POST,
+                    JSON.serialize(prepareBodyForCreateNewContracts(opportunity))
             );
             Logger.debug('Response' + response).addTag('Upload contracts queueable');
             if (response.getStatusCode() == 200) {
@@ -143,11 +169,17 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         return null;
     }
 
-    private static Call_Off_Contract__c createCallOff(Opportunity opportunity, OuterWrapper outerWrapper) {
-        if (opportunity.Contract_Category__c == 'New call off (Agreement on existing contract)') {
+    private static Call_Off_Contract__c createCallOff(
+            Opportunity opportunity,
+            OuterWrapper outerWrapper
+    ) {
+        if (
+                opportunity.Contract_Category__c ==
+                        'New call off (Agreement on existing contract)'
+        ) {
             Call_Off_Contract__c callOff = new Call_Off_Contract__c();
             callOff.Sys_Id_External__c = task_sys_id;
-            callOff.Name = opportunity.Name.length() > 70 ? opportunity.Name.substring(0, 69) : opportunity.Name;
+            callOff.Name = opportunity.Name.length() > 70 ? opportunity.Name.substring(0,69) : opportunity.Name;
             callOff.Parent_Contract__c = opportunity.Contract_Lookup__c;
             callOff.Number__c = task_number;
             callOff.Account__c = opportunity.AccountId;
@@ -158,16 +190,18 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         }
     }
 
-    private static Contract_Archive__c createNewContractArchive(Opportunity opportunity) {
+    private static Contract_Archive__c createNewContractArchive(
+            Opportunity opportunity
+    ) {
         Logger.info('opportunity', opportunity).addTag('Upload contracts queueable');
         Contract_Archive__c archive = new Contract_Archive__c();
         User currentUser = [
-            SELECT Id, Country
-            FROM User
-            WHERE Id = :UserInfo.getUserId()
+                SELECT Id, Country
+                FROM User
+                WHERE Id = :UserInfo.getUserId()
         ];
         archive.LegalOwner__c = country2LegalOwner.get(currentUser.Country);
-        archive.Name = opportunity.Name.length() > 79 ? opportunity.Name.substring(0, 79) : opportunity.Name;
+        archive.Name = opportunity.Name.length() > 79 ? opportunity.Name.substring(0,79) : opportunity.Name;
         archive.Sys_Id_External__c = contract_sys_id;
         archive.Internal_Contract_Number__c = internal_contract_number;
         archive.Primary_Customer__c = opportunity.AccountId;
@@ -178,7 +212,11 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         return archive;
     }
 
-    private static Account_Contract_Archive_Junction__c createJunction(Id archiveId, String internalContractNumber, Opportunity opportunity) {
+    private static Account_Contract_Archive_Junction__c createJunction(
+            Id archiveId,
+            String internalContractNumber,
+            Opportunity opportunity
+    ) {
         Account_Contract_Archive_Junction__c junction = new Account_Contract_Archive_Junction__c();
         junction.Account__c = opportunity.AccountId;
         junction.Contract_Archive__c = archiveId;
@@ -203,7 +241,13 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         url = outerWrapper.result.url;
     }
 
-    private static void updateOpportunity(String archiveId, String junctionId, String callOffId, Opportunity opportunity, OuterWrapper outerWrapper) {
+    private static void updateOpportunity(
+            String archiveId,
+            String junctionId,
+            String callOffId,
+            Opportunity opportunity,
+            OuterWrapper outerWrapper
+    ) {
         if (archiveId != null) {
             opportunity.Contract_Lookup__c = archiveId;
         }
@@ -223,7 +267,10 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     }
 
     private static OuterWrapper deserializeResponse(HttpResponse response) {
-        return (OuterWrapper) JSON.deserialize(response.getBody(), OuterWrapper.class);
+        return (OuterWrapper) JSON.deserialize(
+                response.getBody(),
+                OuterWrapper.class
+        );
     }
 
     public virtual class NewContractBody {
@@ -231,7 +278,11 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         String opportunity_creator;
         String contract_category;
 
-        public NewContractBody(String opportunity_salesforce_id, String contract_category, String opportunity_creator) {
+        public NewContractBody(
+                String opportunity_salesforce_id,
+                String contract_category,
+                String opportunity_creator
+        ) {
             this.opportunity_salesforce_id = opportunity_salesforce_id;
             this.contract_category = contract_category;
             this.opportunity_creator = opportunity_creator;
@@ -242,7 +293,13 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         String contract_sys_id;
         String sub_area;
 
-        public UpdateExistingContractBody(String opportunity_salesforce_id, String contract_category, String opportunity_creator, String contract_sys_id, String sub_area) {
+        public UpdateExistingContractBody(
+                String opportunity_salesforce_id,
+                String contract_category,
+                String opportunity_creator,
+                String contract_sys_id,
+                String sub_area
+        ) {
             super(opportunity_salesforce_id, contract_category, opportunity_creator);
             this.contract_sys_id = contract_sys_id;
             this.sub_area = sub_area;
