@@ -3,7 +3,7 @@
 FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
 if [ -n "$FILES" ]; then
   # Prettify all selected files
-  npm run precommit "$FILES"
+  #npm run precommit "$FILES"
   # Add back the modified/prettified files to staging
   git add "$FILES"
 fi

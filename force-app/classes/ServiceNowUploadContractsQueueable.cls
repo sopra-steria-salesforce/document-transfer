@@ -3,7 +3,7 @@
  */
 
 public with sharing class ServiceNowUploadContractsQueueable implements Queueable, Database.AllowsCallouts {
-  private Opportunity opportunity;
+  private List<Opportunity> opportunities;
   static String contract_sys_id;
   static String internal_contract_number;
   static String relationship_sys_id;
@@ -18,12 +18,12 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
   static String truncatedUsername;
   public static Boolean isContractUploadProcessStarted = false;
 
-  public ServiceNowUploadContractsQueueable(Opportunity opportunity) {
-    this.opportunity = opportunity;
+  public ServiceNowUploadContractsQueueable(List<Opportunity> opportunities) {
+    this.opportunities = opportunities;
   }
 
   public void execute(QueueableContext param1) {
-  
+    Opportunity opportunity = this.opportunities.remove(0);
     Logger.info('opportunity', opportunity).addTag('Upload contracts queueable');
     isContractUploadProcessStarted = true;
     truncatedUsername = [
@@ -49,6 +49,12 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         Logger.debug('Opportunity upload existing contact', opportunity);
         uploadExistingContract(opportunity);
       }
+      
+      if (!opportunities.isEmpty()) {
+            System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
+        }
+
+    
     } catch (Exception ex) {
       // Log to Application_Log__c using the existing method
       Logger.error('Exception occurred during contract upload.', opportunity.Id,  ex).addTag('Upload contracts queueable');
@@ -272,6 +278,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
       OuterWrapper.class
     );
   }
+
 
   public virtual class NewContractBody {
     String opportunity_salesforce_id;
