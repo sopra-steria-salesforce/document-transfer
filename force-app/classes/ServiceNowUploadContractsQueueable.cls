@@ -62,7 +62,6 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     }
 
     private static void uploadNewContract(Opportunity opportunity) {
-        System.debug('uploadeNewContract', opportunity);
         Logger.info('Opportunity', opportunity).addTag('Upload contracts queueable');
         OuterWrapper outerWrapper = createNewContracts(opportunity);
         Logger.info('outerWrapper new contact ' + outerWrapper).addTag('Upload contracts queueable');
@@ -73,7 +72,6 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
     }
 
     private static void uploadExistingContract(Opportunity opportunity) {
-        System.debug('uploadExistingContact', opportunity);
         Logger.info('Opportunity', opportunity).addTag('Upload contracts queueable');
         OuterWrapper outerWrapper = createExistingContracts(opportunity);
         Call_Off_Contract__c callOff = createCallOff(opportunity, outerWrapper);
