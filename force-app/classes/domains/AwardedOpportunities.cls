@@ -60,7 +60,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities {
     public void upsertContractToServiceNow() {
         //TODO: Bulkify - CIS-105
         List<Opportunity> clonedOpportunities = this.opportunities.deepClone(true); //Need to clone to prevent "Record is read-only" error in Queueable due to being After Update context.
-        DML.enqueueJob(new ServiceNowUploadContractsQueueable(clonedOpportunities));
+        DML.enqueueJob(new ServiceNowUploadContractsQueueable(new List<Opportunity>{ clonedOpportunities }));
     }
 
     public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Account parentAccount, User opportunityOwner) {
