@@ -50,7 +50,7 @@ public with sharing class ServiceNowUploadContractsQueueable implements Queueabl
         uploadExistingContract(opportunity);
       }
       
-      if (!opportunities.isEmpty()) {
+      if (!opportunities.isEmpty() && AsyncInfo.getCurrentQueueableStackDepth() < AsyncInfo.getMaximumQueueableStackDepth()) {
             System.enqueueJob(new ServiceNowUploadContractsQueueable(opportunities));
         }
 
