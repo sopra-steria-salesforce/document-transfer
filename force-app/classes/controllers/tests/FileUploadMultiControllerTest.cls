@@ -64,11 +64,6 @@ public with sharing class FileUploadMultiControllerTest {
 		List<Opportunity> opportunity = [SELECT Id, AccountId, OwnerId, StageName, Owner_Country__c FROM Opportunity];
 		MetadataTriggerHandler.bypass('UpsertContractOnNavisionChange');
 
-		update new Account(
-			Id = opportunity[0].AccountId,
-			Navision_Customer_NO__c = false
-		);
-
 		Assert.isFalse(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[0]), 'Opportunity country should not match Navision country.');
 	}
 }
