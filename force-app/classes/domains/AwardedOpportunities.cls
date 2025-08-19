@@ -35,7 +35,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				ownerCountryMismatch = true;
 			}
 		}
-		if (ownerCountryMismatch); Logger.saveLog();
+		if (ownerCountryMismatch) Logger.saveLog();
 		this.opportunities =opportunitiesWhereOwnerCountryMatchesNavisionCountry;
 		return this;
 	}
