@@ -63,7 +63,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		return this;
 	}
 
-	public void upsertContractToServiceNow(){
+	public void upsertContractToServiceNow() {
 		List<Opportunity> clonedOpportunities = this.opportunities.deepClone(true); //Need to clone to prevent "Record is read-only" error in Queueable due to being After Update context.
 		DML.asyncOptions.MaximumQueueableStackDepth = clonedOpportunities.size();
 		DML.enqueueJob(new ServiceNowUploadContractsQueueable(clonedOpportunities));
