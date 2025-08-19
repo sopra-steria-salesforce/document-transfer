@@ -23,6 +23,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 	 * @description: Remove Opportunities where Owner Country does not match the Country that the Parent Account is registerd in Navision
 	 */
 	public AwardedOpportunities filterByMatchingOwnerCountry(){
+		Boolean ownerCountryMismatch = false;
 		List<Opportunity> opportunitiesWhereOwnerCountryMatchesNavisionCountry = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
 			Account parentAccount = parentAccountsByIds.get(opportunity.AccountId);
@@ -31,11 +32,10 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
-				Logger.saveLog();
-				Logger.suspendSaving();
+				ownerCountryMismatch = true;
 			}
 		}
-		Logger.resumeSaving();
+		if (ownerCountryMismatch); Logger.saveLog();
 		this.opportunities =opportunitiesWhereOwnerCountryMatchesNavisionCountry;
 		return this;
 	}
