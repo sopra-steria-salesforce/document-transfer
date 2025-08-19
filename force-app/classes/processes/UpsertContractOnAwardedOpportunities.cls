@@ -4,7 +4,6 @@ public with sharing class UpsertContractOnAwardedOpportunities implements Trigge
 		Logger.debug('UpsertContractOnAwardedOpportunities - After Update');
 
 		AwardedOpportunities newlyAwardedOpportunities = new AwardedOpportunities(newOpportunities, oldOpportunities);
-		System.debug(newlyAwardedOpportunities);
 		newlyAwardedOpportunities.filterByMatchingOwnerCountry();
 		newlyAwardedOpportunities.filterNewOpportunitiesWithoutContracts();
 		if (!newlyAwardedOpportunities.isEmpty()) {

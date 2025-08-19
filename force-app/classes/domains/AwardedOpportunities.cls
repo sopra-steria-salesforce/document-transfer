@@ -1,7 +1,5 @@
 public inherited sharing class AwardedOpportunities extends Opportunities{
 	public AwardedOpportunities(List<Opportunity> opportunities) {
-		System.debug('AwardedOpportunities');
-		System.debug(opportunities);
 		this.opportunities = new List<Opportunity>();
 		for (Opportunity opportunity : opportunities) {
 			if (opportunity.StageName == AWARDED) {
@@ -25,14 +23,10 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 	 * @description: Remove Opportunities where Owner Country does not match the Country that the Parent Account is registerd in Navision
 	 */
 	public AwardedOpportunities filterByMatchingOwnerCountry(){
-		System.debug('filterByMatchingOwnerCountry');
-		System.debug(opportunities);
 		List<Opportunity> opportunitiesWhereOwnerCountryMatchesNavisionCountry = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
 			Account parentAccount = parentAccountsByIds.get(opportunity.AccountId);
 			User opportunityOwner = opportunityOwnersByIds.get(opportunity.OwnerId);
-			System.debug(parentAccount);
-			System.debug(opportunityOwner);
 			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccount, opportunityOwner)) {
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
