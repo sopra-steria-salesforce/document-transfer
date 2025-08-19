@@ -31,8 +31,11 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
+				Logger.saveLog();
+				Logger.suspendSaving();
 			}
 		}
+		Logger.resumeSaving();
 		this.opportunities =opportunitiesWhereOwnerCountryMatchesNavisionCountry;
 		return this;
 	}
@@ -41,8 +44,8 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		List<Opportunity> opportunitiesWithNoContractInServiceNow = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
 			if(
-				opportunity.New_Or_Renewal__c == 'New' &&
-				String.isBlank(opportunity.ContractServiceNowUrl__c)
+					opportunity.New_Or_Renewal__c == 'New' &&
+							String.isBlank(opportunity.ContractServiceNowUrl__c)
 			){
 				opportunitiesWithNoContractInServiceNow.add(opportunity);
 				Logger.info('Contract is created in ServiceNow for this Opportunity', opportunity).addTag('Opportunity trigger handler service');
@@ -60,16 +63,16 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		return this;
 	}
 
-	public void upsertContractToServiceNow() {
+	public void upsertContractToServiceNow(){
 		List<Opportunity> clonedOpportunities = this.opportunities.deepClone(true); //Need to clone to prevent "Record is read-only" error in Queueable due to being After Update context.
 		DML.asyncOptions.MaximumQueueableStackDepth = clonedOpportunities.size();
-		DML.enqueueJob(new ServiceNowUploadContractsQueueable(clonedOpportunities));	 
+		DML.enqueueJob(new ServiceNowUploadContractsQueueable(clonedOpportunities));
 	}
 
 	public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Account parentAccount, User opportunityOwner){
 		return
 				opportunityOwner.Country=='Norway' && parentAccount.Navision_Customer_NO__c ||
-				opportunityOwner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
-				opportunityOwner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
+						opportunityOwner.Country=='Sweden' && parentAccount.Navision_Customer_SE__c ||
+						opportunityOwner.Country=='Denmark' && parentAccount.Navision_Customer_DK__c;
 	}
 }
