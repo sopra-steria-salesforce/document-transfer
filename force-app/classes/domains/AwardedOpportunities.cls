@@ -23,6 +23,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 	 * @description: Remove Opportunities where Owner Country does not match the Country that the Parent Account is registerd in Navision
 	 */
 	public AwardedOpportunities filterByMatchingOwnerCountry(){
+		Boolean ownerCountryMismatch = false;
 		List<Opportunity> opportunitiesWhereOwnerCountryMatchesNavisionCountry = new List<Opportunity>();
 		for (Opportunity opportunity:this.opportunities){
 			Account parentAccount = parentAccountsByIds.get(opportunity.AccountId);
@@ -31,8 +32,10 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
+				ownerCountryMismatch = true;
 			}
 		}
+		if (ownerCountryMismatch) Logger.saveLog();
 		this.opportunities =opportunitiesWhereOwnerCountryMatchesNavisionCountry;
 		return this;
 	}
@@ -63,7 +66,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 	public void upsertContractToServiceNow() {
 		List<Opportunity> clonedOpportunities = this.opportunities.deepClone(true); //Need to clone to prevent "Record is read-only" error in Queueable due to being After Update context.
 		DML.asyncOptions.MaximumQueueableStackDepth = clonedOpportunities.size();
-		DML.enqueueJob(new ServiceNowUploadContractsQueueable(clonedOpportunities));	 
+		DML.enqueueJob(new ServiceNowUploadContractsQueueable(clonedOpportunities));
 	}
 
 	public Boolean doesOpportunityOwnerCountryMatchNavisionCustomerCountry(Account parentAccount, User opportunityOwner){
