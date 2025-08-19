@@ -5,8 +5,9 @@ public with sharing class FileUploadMultiController {
     
     @AuraEnabled
     public static Boolean doesOpportunityCountryMatchNavisionCountry(Opportunity opportunity){
-        System.debug('doesOpportunityCountryMatchNavisionCountry');
-        System.debug(opportunity);
+        Logger.debug('doesOpportunityCountryMatchNavisionCountry');
+        Logger.saveLog();
+        Logger.debug('Opportunity ',opportunity);
         AwardedOpportunities awardedOpportunities = new AwardedOpportunities(new List<Opportunity>{opportunity});
         awardedOpportunities.filterByMatchingOwnerCountry();
         return !awardedOpportunities.isEmpty();
