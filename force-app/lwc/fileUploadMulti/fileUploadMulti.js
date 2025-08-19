@@ -39,7 +39,7 @@ export default class fileUploadMulti extends LightningElement {
         self.refreshMyData();
         if(this.opportunity.data){
             this.showConditionalSection = this.opportunity.data.fields.StageName.value === '5 - Awarded' && (this.opportunity.data.fields.ContractServiceNowUrl__c.value === null || this.opportunity.data.fields.ContractServiceNowUrl__c.value === undefined || this.opportunity.data.fields.ContractServiceNowUrl__c.value === '');
-            doesOpportunityCountryMatchNavisionCountry({opportunity: this.opportunity})
+            doesOpportunityCountryMatchNavisionCountry({opportunityId: this.recordId})
                 .then(result => { this.navisionCheck = result;})
         }
         refreshApex(this.opportunity).then(() => {
@@ -49,8 +49,6 @@ export default class fileUploadMulti extends LightningElement {
         refreshApex(this.opportunity).then(() => {
             if(this.opportunity.data){
                 this.showConditionalSection = this.opportunity.data.fields.StageName.value === '5 - Awarded' && (this.opportunity.data.fields.ContractServiceNowUrl__c.value === null || this.opportunity.data.fields.ContractServiceNowUrl__c.value === undefined || this.opportunity.data.fields.ContractServiceNowUrl__c.value === '');
-                console.log('this.showConditionalSection');
-                console.log(this.showConditionalSection);
             }
         });
     }
@@ -63,11 +61,8 @@ export default class fileUploadMulti extends LightningElement {
                     result.data.fields.ContractServiceNowUrl__c.value === undefined ||
                     result.data.fields.ContractServiceNowUrl__c.value === '');
             this.contractServiceNowUrl = result.data.fields.ContractServiceNowUrl__c.value;
-            console.log('Wire Opportunity');
-            doesOpportunityCountryMatchNavisionCountry({opportunity: this.opportunity})
+            doesOpportunityCountryMatchNavisionCountry({opportunityId: this.recordId})
                 .then(result => { this.navisionCheck = result;})
-                console.log('this.navisionCheck')
-                console.log(this.navisionCheck)
             }
     }
     refresh(){
