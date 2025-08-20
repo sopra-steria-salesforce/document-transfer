@@ -53,8 +53,7 @@ jobs:
         with:
           default: ${{ github.repository }}
           conditionals-with-values: |
-            ${{ inputs.ENV == 'prod' || inputs.ENV == 'qa' }} => ${{ github.repository }}/releases/tag/${{ inputs.TAG }}
-            ${{ inputs.ENV == 'uat' }} => ${{ github.repository }}/commits/uat
+            ${{ inputs.ENV == 'prod' || inputs.ENV == 'uat' }} => ${{ github.repository }}/releases/tag/${{ inputs.TAG }}
 
       # Use https://app.slack.com/block-kit-builder to build messages.
       - name: Fetch Payload
