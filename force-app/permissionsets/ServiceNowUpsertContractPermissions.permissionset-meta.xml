@@ -24,7 +24,7 @@
         <apexClass>UpsertContractOnAwardedOpportunities</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <description>Permissions needed to upsert contracts towards ServiceNow</description>
+    <description>Permissions needed to upsert contracts towards ServiceNow.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>ServiceNow Upsert Contract Permissions</label>
 </PermissionSet>
