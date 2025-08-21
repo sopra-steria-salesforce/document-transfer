@@ -35,7 +35,7 @@ public with sharing class FileUploadMultiControllerTest {
 				Navision_Customer_NO__c = true
 		);
 		
-		Assert.isTrue(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[0]), 'Opportunity country should match Navision country.');
+		Assert.isTrue(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[0].Id), 'Opportunity country should match Navision country.');
 	}
 
 	@IsTest
@@ -43,6 +43,6 @@ public with sharing class FileUploadMultiControllerTest {
 		List<Opportunity> opportunity = [SELECT Id, AccountId, OwnerId, StageName, Owner_Country__c FROM Opportunity];
 		MetadataTriggerHandler.bypass('UpsertContractOnNavisionChange');
 
-		Assert.isFalse(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[0]), 'Opportunity country should not match Navision country.');
+		Assert.isFalse(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[0].Id), 'Opportunity country should not match Navision country.');
 	}
 }
