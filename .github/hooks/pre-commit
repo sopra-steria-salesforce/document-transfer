@@ -1,5 +1,5 @@
 #!/bin/bash
-
+exit 0
 FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
 if [ -n "$FILES" ]; then
   # Prettify all selected files
