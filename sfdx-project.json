@@ -6,29 +6,20 @@
             "versionNumber": "0.11.0.NEXT",
             "versionDescription": "Handles document transfer logic, logging, and integration support.",
             "default": true,
-            "seedMetadata": {
-                "path": "pre_dependencies/standardValueSets"
-            },
+            "seedMetadata": { "path": "pre_dependencies/standardValueSets" },
             "dependencies": [
+                { "package": "NebulaLogger@4.16.0.2", "versionNumber": "null" },
+                { "package": "DashboardsGSP@2.9.0.1", "versionNumber": "null" },
+                { "package": "Pardot@5.5.0.2", "versionNumber": "null" },
                 {
-                    "package": "NebulaLogger@4.16.0.2"
+                    "package": "LightningMessagingUtility@1.5.0.1",
+                    "versionNumber": "null"
                 },
                 {
-                    "package": "DashboardsGSP@2.9.0.1"
+                    "package": "trigger-actions-framework@0.3.2",
+                    "versionNumber": "null"
                 },
-                {
-                    "package": "Pardot@5.5.0.2"
-                },
-                {
-                    "package": "LightningMessagingUtility@1.5.0.1"
-                },
-                {
-                    "package": "trigger-actions-framework@0.3.2"
-                },
-                {
-                    "package": "platform-base",
-                    "versionNumber": "1.7.0.LATEST"
-                }
+                { "package": "platform-base", "versionNumber": "2.3.0.LATEST" }
             ]
         }
     ],
