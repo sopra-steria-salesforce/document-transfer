@@ -6,18 +6,25 @@ public with sharing class FileUploadMultiControllerTest {
 		System.runAs(new User(Id=UserInfo.getUserId())) {
 			TestingUtils.activateCustomPermission(UserInfo.getUserId(), 'ServiceNowContractUpsertTesting');
 		}
-		List<Opportunity> opportunity = TestDataFactory.createOpportunities(1, true, false);
+		List<Opportunity> opportunity = TestDataFactory.createOpportunities(2, true, false);
 		update new User(
 				Id=UserInfo.getUserId(),
 				Country='Norway'
 		);
 
-		Account parentAccount = new Account(Name = 'Test');
-		insert parentAccount;
+		Account parentAccount1 = new Account(Name = 'Test');
+		insert parentAccount1;
 
-		opportunity[0].AccountId = parentAccount.Id;
+		Account parentAccount2 = new Account(Name = 'Sopra Steria AS');
+		insert parentAccount2;
+
+		opportunity[0].AccountId = parentAccount1.Id;
 		opportunity[0].OwnerId = UserInfo.getUserId();
 		opportunity[0].StageName = Opportunities.AWARDED;
+
+		opportunity[1].AccountId = parentAccount2.Id;
+		opportunity[1].OwnerId = UserInfo.getUserId();
+		opportunity[1].StageName = Opportunities.AWARDED;
 		
 		MetadataTriggerHandler.bypass('UpsertContractOnAwardedOpportunities');
 		System.runAs(new User(Id=UserInfo.getUserId())){
@@ -44,5 +51,13 @@ public with sharing class FileUploadMultiControllerTest {
 		MetadataTriggerHandler.bypass('UpsertContractOnNavisionChange');
 
 		Assert.isFalse(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[0].Id), 'Opportunity country should not match Navision country.');
+	}
+
+	@IsTest
+	static void testIgnoreNavisionCheckForSopraSteriaAS(){
+		List<Opportunity> opportunity = [SELECT Id, AccountId, Name, OwnerId, StageName, Owner_Country__c FROM Opportunity];
+		MetadataTriggerHandler.bypass('UpsertContractOnNavisionChange');
+		
+		Assert.isTrue(FileUploadMultiController.doesOpportunityCountryMatchNavisionCountry(opportunity[1].Id), 'Opportunity with account name "Sopra Steria AS" should not be checked for Navision country match.');
 	}
 }

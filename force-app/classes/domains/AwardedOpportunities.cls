@@ -28,7 +28,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 		for (Opportunity opportunity:this.opportunities){
 			Account parentAccount = parentAccountsByIds.get(opportunity.AccountId);
 			User opportunityOwner = opportunityOwnersByIds.get(opportunity.OwnerId);
-			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccount, opportunityOwner)) {
+			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccount, opportunityOwner) || parentAccount.Name == 'Sopra Steria AS')  {
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
 				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
