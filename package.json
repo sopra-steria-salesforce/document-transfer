@@ -1,59 +1,59 @@
 {
-    "scripts": {
-        "preinstall": "git config core.hooksPath ./.github/hooks",
-        "lint": "eslint **/{lwc,aura}/**/*.js",
-        "test": "npm run test:unit",
-        "test:unit": "sfdx-lwc-jest --skipApiVersionCheck",
-        "test:unit:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",
-        "test:unit:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck",
-        "test:unit:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
-        "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
-        "prettier:file": "prettier --write",
-        "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
-        "precommit": "lint-staged",
-        "auth:devhub": "sf auth:web:login --set-default-dev-hub --alias ",
-        "auth:sandbox": "sf auth:web:login --instance-url https://test.salesforce.com --alias ",
-        "scratch:create": "npx ssdx create",
-        "scratch:help": "npx ssdx create -h && echo && echo && echo && echo 'run: \"npm run scratch:create -- <PARAMETERS_FROM_ABOVE>\"'",
-        "project:retrieve": "sf project:retrieve:start",
-        "project:deploy": "sf project:deploy:start",
-        "project:retrieve:preview": "sf project:retrieve:preview",
-        "project:deploy:preview": "sf project:deploy:preview"
-    },
-    "lint-staged": {
-        "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}": [
-            "prettier --write"
-        ],
-        "**/{aura,lwc}/**": [
-            "eslint"
-        ],
-        "**/lwc/**": [
-            "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
-        ]
-    },
-    "devDependencies": {
-        "@flxbl-io/sfp": "^39.4.1",
-        "@lwc/eslint-plugin-lwc": "^2.0.1",
-        "@prettier/plugin-xml": "^3.4.1",
-        "@sa11y/jest": "^6.13.0",
-        "@salesforce/cli": "^2.72.21",
-        "@salesforce/core": "^8.8.2",
-        "@salesforce/eslint-config-lwc": "^3.7.1",
-        "@salesforce/eslint-plugin-aura": "^2.1.0",
-        "@salesforce/eslint-plugin-lightning": "^1.0.1",
-        "@salesforce/sfdx-lwc-jest": "^5.1.0",
-        "eslint": "^8.57.1",
-        "eslint-config-prettier": "9.1.0",
-        "eslint-plugin-import": "^2.30.0",
-        "eslint-plugin-jest": "^28.10.0",
-        "jest-canvas-mock": "^2.5.2",
-        "lint-staged": "^15.2.10",
-        "pino-pretty": "^11.2.2",
-        "prettier": "^3.4.2",
-        "prettier-plugin-apex": "^2.2.2",
-        "ssdx-cli": "^0.11.0"
-    },
-    "volta": {
-        "node": "18.19.1"
-    }
+	"scripts": {
+		"preinstall": "git config core.hooksPath ./.github/hooks",
+		"lint": "eslint **/{lwc,aura}/**/*.js",
+		"test": "npm run test:unit",
+		"test:unit": "sfdx-lwc-jest",
+		"test:unit:watch": "sfdx-lwc-jest --watch",
+		"test:unit:debug": "sfdx-lwc-jest --debug",
+		"test:unit:coverage": "sfdx-lwc-jest --coverage",
+		"prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
+		"prettier:file": "prettier --write",
+		"prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
+		"precommit": "lint-staged",
+		"auth:devhub": "sf auth:web:login --set-default-dev-hub --alias ",
+		"auth:sandbox": "sf auth:web:login --instance-url https://test.salesforce.com --alias ",
+		"scratch:create": "ssdx create",
+		"scratch:help": "ssdx create -h && echo && echo && echo && echo 'run: \"npm run scratch:create -- <PARAMETERS_FROM_ABOVE>\"'",
+		"project:retrieve": "sf project:retrieve:start",
+		"project:deploy": "sf project:deploy:start",
+		"project:retrieve:preview": "sf project:retrieve:preview",
+		"project:deploy:preview": "sf project:deploy:preview"
+	},
+	"lint-staged": {
+		"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}": [
+			"prettier --write"
+		],
+		"**/{aura,lwc}/**": [
+			"eslint"
+		],
+		"**/lwc/**": [
+			"sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
+		]
+	},
+	"devDependencies": {
+		"@flxbl-io/sfp": "^39.4.1",
+		"@lwc/eslint-plugin-lwc": "^2.0.1",
+		"@prettier/plugin-xml": "^3.4.1",
+		"@sa11y/jest": "^6.13.0",
+		"@salesforce/cli": "^2.72.21",
+		"@salesforce/core": "^8.8.2",
+		"@salesforce/eslint-config-lwc": "^3.7.1",
+		"@salesforce/eslint-plugin-aura": "^2.1.0",
+		"@salesforce/eslint-plugin-lightning": "^1.0.1",
+		"@salesforce/sfdx-lwc-jest": "^5.1.0",
+		"eslint": "^8.57.1",
+		"eslint-config-prettier": "9.1.0",
+		"eslint-plugin-import": "^2.30.0",
+		"eslint-plugin-jest": "^28.10.0",
+		"jest-canvas-mock": "^2.5.2",
+		"lint-staged": "^15.2.10",
+		"pino-pretty": "^11.2.2",
+		"prettier": "^3.4.2",
+		"prettier-plugin-apex": "^2.2.2",
+		"ssdx-cli": "^0.11.0"
+	},
+	"volta": {
+		"node": "18.19.1"
+	}
 }
