@@ -19,7 +19,7 @@
                     "package": "trigger-actions-framework@0.3.2",
                     "versionNumber": "null"
                 },
-                { "package": "platform-base", "versionNumber": "2.3.0.LATEST" }
+                { "package": "platform-base", "versionNumber": "2.6.0.LATEST" }
             ]
         }
     ],
