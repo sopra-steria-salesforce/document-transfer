@@ -42,7 +42,7 @@ public inherited sharing abstract class Opportunities {
 		for (Opportunity opportunity:this.opportunities){
 			accountIds.add(opportunity.AccountId);
 		}
-		return new Map<Id, Account>([SELECT Navision_Customer_NO__c, Navision_Customer_DK__c, Navision_Customer_SE__c FROM Account WHERE Id IN: accountIds]);
+		return new Map<Id, Account>([SELECT Navision_Customer_NO__c, Navision_Customer_DK__c, Navision_Customer_SE__c, Name FROM Account WHERE Id IN: accountIds]);
 	}
 
 	public Map<Id, User> getOpportunityOwnersByIds(){
