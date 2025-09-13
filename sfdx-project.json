@@ -8,12 +8,12 @@
             "default": true,
             "seedMetadata": { "path": "pre_dependencies/standardValueSets" },
             "dependencies": [
-                { "package": "NebulaLogger@4.16.0.2"},
-                { "package": "DashboardsGSP@2.9.0.1"},
-                { "package": "Pardot@5.5.0.2"},
-                { "package": "LightningMessagingUtility@1.5.0.1"},
-                { "package": "trigger-actions-framework@0.3.2"},
-                { "package": "platform-base", "versionNumber": "2.6.0.LATEST" }
+                { "package": "NebulaLogger@4.16.0.2" },
+                { "package": "DashboardsGSP@2.9.0.1" },
+                { "package": "Pardot@5.5.0.2" },
+                { "package": "LightningMessagingUtility@1.5.0.1" },
+                { "package": "trigger-actions-framework@0.3.2" },
+                { "package": "platform-base", "versionNumber": "2.10.0.LATEST" }
             ]
         }
     ],
