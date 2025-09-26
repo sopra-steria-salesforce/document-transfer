@@ -4,6 +4,7 @@
     <active>true</active>
     <description>Ensures that if an Opportunity has a Swedish owner and the Contract Category is set to “Change to an active call off or contract” the New or Renewal field must be set to “Renewal.”</description>
     <errorConditionFormula>AND(
+			$Permission.Bypass_validation_rule = FALSE,
    ISPICKVAL(Contract_Category__c, &quot;Change to an active call off or contract&quot;),
    ISPICKVAL(New_or_Renewal__c, &quot;New&quot;),
    Owner.Country = &quot;Sweden&quot;
