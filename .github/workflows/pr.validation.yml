@@ -1,13 +1,13 @@
-name: '[PR] Validation'
+name: "[PR] Validation"
 on:
   pull_request:
     types:
       - opened
       - synchronize
     paths:
-      - 'force-app/**'
-      - 'unpackaged/**'
-      - 'config/**'
+      - "force-app/**"
+      - "unpackaged/**"
+      - "config/**"
 concurrency:
   group: validation-${{ github.base_ref }}-${{ github.head_ref }}
   cancel-in-progress: true
@@ -155,6 +155,9 @@ jobs:
           node-version: 20
       - run: npm ci --prefer-offline --no-audit # force offline installs for quicker run
 
+      - name: Deactivate Source Tracking
+        run: sf org disable tracking --target-org ${{ needs.scratch-org.outputs.username }}
+
       # Run Pre-Deploy Steps
       - name: Run Pre-Deploy Steps
         run: npx ssdx resource --pre-deploy --target-org ${{ needs.scratch-org.outputs.username }} --show-output --ci
@@ -271,20 +274,28 @@ jobs:
           totalLines=0
           for row in $(jq -c -r '.[]' <<< "$(cat tests/apex/test-result-codecoverage.json)"); do
             name=$(jq -r '.name' <<< $row)
+
+            # if the class in the code coverage report is a class in this repo, count the
             if [[ " ${classes[@]} " =~ " ${name} " ]]; then
-            
+          
               covered=$(jq '.totalCovered' <<< $row)
               lines=$(jq '.totalLines' <<< $row)
-              
+          
               if [[ $covered != "null" && $lines != "null" && $lines != "0" ]]; then
-                let totalCovered+=covered
-                let totalLines+=lines
+                totalCovered=$((totalCovered + covered))
+                totalLines=$((totalLines + lines))
               fi
             fi
           done
 
-          let codecoverage=totalCovered*100/totalLines
-          echo "codecoverage=$(echo $codecoverage)" >> $GITHUB_OUTPUT
+          # If no lines to cover, set coverage to 100%
+          if [[ $totalLines == "0" ]]; then
+            codecoverage=100
+          else
+            codecoverage=$((totalCovered * 100 / totalLines))
+          fi
+
+          echo "codecoverage=$codecoverage" >> $GITHUB_OUTPUT
 
       # Validate 75% Code Coverage
       - name: Validate 75% Code Coverage
