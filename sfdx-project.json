@@ -8,7 +8,7 @@
             "default": true,
             "seedMetadata": { "path": "pre_dependencies/standardValueSets" },
             "dependencies": [
-                { "package": "platform-base", "versionNumber": "2.23.0.LATEST" }
+                { "package": "platform-base", "versionNumber": "2.24.0.LATEST" }
             ]
         }
     ],
@@ -25,5 +25,5 @@
         "platform-base": "0HoP100000001CDKAY",
         "document-transfer": "0HoP100000001FRKAY"
     },
-	"calculateTransitiveDependencies": true
+    "calculateTransitiveDependencies": true
 }
