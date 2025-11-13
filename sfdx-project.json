@@ -8,7 +8,7 @@
             "default": true,
             "seedMetadata": { "path": "pre_dependencies/standardValueSets" },
             "dependencies": [
-                { "package": "platform-base", "versionNumber": "2.24.0.LATEST" }
+                { "package": "platform-base", "versionNumber": "2.27.0.LATEST" }
             ]
         }
     ],
