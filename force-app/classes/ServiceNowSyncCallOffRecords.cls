@@ -16,7 +16,9 @@ public with sharing class ServiceNowSyncCallOffRecords {
                 OuterWrapper outerWrapper = deserializeResponse(response);
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
                 CallOffContractIterable callOffContractIterable = new CallOffContractIterable(callOffRecords);
-                upsertCallOffRecords(callOffRecords);
+                //upsertCallOffRecords(callOffRecords);
+                BatchUpsertCallOffRecords batchUpsertCallOffRecords = new BatchUpsertCallOffRecords(opportunityId2CalloffSysExternalId, callOffContracts);
+                BatchUpsertCallOffRecordsDatabase.executeBatch(batchUpsertCallOffRecords);
             }
         }catch(Exception e) {
             Logger.error('Exception occurred during API call',  e).addTag('Sync call off records');
