@@ -15,6 +15,7 @@ public with sharing class ServiceNowSyncCallOffRecords {
             if (response.getStatusCode() == 200) {
                 OuterWrapper outerWrapper = deserializeResponse(response);
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
+                CallOffContractIterable callOffContractIterable = new CallOffContractIterable(callOffRecords);
                 upsertCallOffRecords(callOffRecords);
             }
         }catch(Exception e) {
