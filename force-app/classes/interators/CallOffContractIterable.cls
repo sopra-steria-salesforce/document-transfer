@@ -6,6 +6,6 @@ public with sharing class CallOffContractIterable implements Iterable<Call_Off_C
     }
 
     public Iterator<Call_Off_Contract__c> Iterator(){
-        return new CallOffContractIterable(callOffContracts);
+        return new CallOffContractIterator(callOffContracts);
     }
 }
