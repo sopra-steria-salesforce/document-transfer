@@ -1,4 +1,4 @@
-public with sharing class CallOffContractIterator {
+public with sharing class CallOffContractIterator implements Iterator<Call_Off_Contract__c>{
     private List<Call_Off_Contract__c> callOffContracts;
     private Integer index = 0;
 
@@ -7,7 +7,7 @@ public with sharing class CallOffContractIterator {
     }
 
     public Boolean hasNext(){
-        return index < callOffContracts.size();
+        return callOffContracts.size() > index;
     }
 
     public Call_Off_Contract__c next(){
