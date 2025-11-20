@@ -19,7 +19,7 @@ public with sharing class ServiceNowSyncCallOffRecords {
                 Logger.info('ServiceNow call succeeded with 200 OK');
                 OuterWrapper outerWrapper = deserializeResponse(response);
                 Logger.info('Received records: ' + outerWrapper.result.size());
-                Logge.saveLog();
+                Logger.saveLog();
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
                 CallOffContractIterable callOffContractIterable = new CallOffContractIterable(callOffRecords);
                 //upsertCallOffRecords(callOffRecords);
