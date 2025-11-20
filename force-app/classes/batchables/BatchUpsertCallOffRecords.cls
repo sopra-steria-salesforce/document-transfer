@@ -1,19 +1,20 @@
 public with sharing class BatchUpsertCallOffRecords implements Database.Batchable<sObject>, Database.Stateful{
-    static Map<String,String> opportunityId2CalloffSysExternalId = new Map<String, String>();
+    public static Map<String,String> opportunityId2CalloffSysExternalId = new Map<String, String>();
     private List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>();
+    static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
     
-    public BatchUpsertCallOffRecords(Map<String,String> opportunityId2CalloffSysExternalId, List<Call_Off_Contract__c> callOffContracts) {
-        this.opportunityId2CalloffSysExternalId = opportunityId2CalloffSysExternalId;
+    public BatchUpsertCallOffRecords(List<Call_Off_Contract__c> callOffContracts) {
         this.callOffContracts = callOffContracts;
     }
     
-    public Iterable start(Database.BatchableContext info){ 
+    public Iterable<Call_Off_Contract__c> start(Database.BatchableContext info){ 
+        Logger.info('start BatchUpsertCallOffRecords');
         return new CallOffContractIterable(callOffContracts); 
     }
 
     public void execute(Database.BatchableContext info, List<Call_Off_Contract__c> callOffContracts){
       Boolean foundError = false;
-        Database.UpsertResult[] upsertResults = Database.upsert(callOffRecords, Call_Off_Contract__c.Fields.Sys_Id_External__c, false);
+        Database.UpsertResult[] upsertResults = Database.upsert(callOffContracts, Call_Off_Contract__c.Fields.Sys_Id_External__c, false);
         Logger.info('upsertResults: ', upsertResults).addTag('Sync call off records');
         for (Database.UpsertResult upsertResult : upsertResults) {
              Logger.info('upsertResult', upsertResult).addTag('Sync call off records');
@@ -27,9 +28,9 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
         Logger.saveLog();
 
         if(!foundError) {
-            List<Call_Off_Contract__c> callOffContracts = [SELECT Id, Sys_Id_External__c FROM Call_Off_Contract__c WHERE Sys_Id_External__c IN :opportunityId2CalloffSysExternalId.values()];
+            List<Call_Off_Contract__c> callOffContractsList = [SELECT Id, Sys_Id_External__c FROM Call_Off_Contract__c WHERE Sys_Id_External__c IN :opportunityId2CalloffSysExternalId.values()];
             Map<String,String> externalId2contractId = new Map<String,String>();
-            for(Call_Off_Contract__c callOff : callOffContracts){
+            for(Call_Off_Contract__c callOff : callOffContractsList){
                 externalId2contractId.put(callOff.Sys_Id_External__c, callOff.Id);
             }
             List<Opportunity> opportunities = [SELECT Id, Call_Off_Contract__c FROM Opportunity WHERE Id IN :opportunityId2CalloffSysExternalId.keySet()];

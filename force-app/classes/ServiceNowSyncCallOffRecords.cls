@@ -11,14 +11,21 @@ public with sharing class ServiceNowSyncCallOffRecords {
                     Utils.METHOD_GET,
                     null
             );
+            Logger.info('Status code:', response.getStatus()).addTag('Sync call off records');
+            Logger.info('Response body:', response.getBody()).addTag('Sync call off records');
+            Logger.saveLog();
 
             if (response.getStatusCode() == 200) {
+                Logger.info('ServiceNow call succeeded with 200 OK');
                 OuterWrapper outerWrapper = deserializeResponse(response);
+                Logger.info('Received records: ' + outerWrapper.result.size());
+                Logge.saveLog();
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
                 CallOffContractIterable callOffContractIterable = new CallOffContractIterable(callOffRecords);
                 //upsertCallOffRecords(callOffRecords);
-                BatchUpsertCallOffRecords batchUpsertCallOffRecords = new BatchUpsertCallOffRecords(opportunityId2CalloffSysExternalId, callOffContracts);
-                BatchUpsertCallOffRecordsDatabase.executeBatch(batchUpsertCallOffRecords);
+                BatchUpsertCallOffRecords.opportunityId2CalloffSysExternalId = opportunityId2CalloffSysExternalId;
+                BatchUpsertCallOffRecords batchUpsertCallOffRecords = new BatchUpsertCallOffRecords(callOffRecords);
+                Database.executeBatch(batchUpsertCallOffRecords);
             }
         }catch(Exception e) {
             Logger.error('Exception occurred during API call',  e).addTag('Sync call off records');
