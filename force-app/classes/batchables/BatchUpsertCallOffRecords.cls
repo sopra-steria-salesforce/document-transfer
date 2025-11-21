@@ -1,5 +1,5 @@
 public with sharing class BatchUpsertCallOffRecords implements Database.Batchable<Call_Off_Contract__c>, Database.Stateful{
-    public static Map<String,String> opportunityIdsByCallOffSysExternalIds;
+    public static Map<String,Id> opportunityIdsByCallOffSysExternalIds;
     public static List<Call_Off_Contract__c> callOffContracts;
     private static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
     
@@ -24,7 +24,7 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
         Logger.saveLog();
 
         if(!foundError) {
-			Map<Id,String> callOffIdsByOpportunityIds = getCallOffIdsByOpportunityIds(callOffContracts);
+			Map<Id, Id> callOffIdsByOpportunityIds = getCallOffIdsByOpportunityIds(callOffContracts);
             List<Opportunity> opportunities = [SELECT Id, Call_Off_Contract__c FROM Opportunity WHERE Id IN :callOffIdsByOpportunityIds.keySet()];
             for(Opportunity opportunity : opportunities) {
                 opportunity.Call_Off_Contract__c = callOffIdsByOpportunityIds.get(opportunity.Id);
@@ -37,8 +37,8 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
 	/**
 	 * @description get subset of Opportunities related to this batch of Call Off Contracts
 	 */
-	private static Map<Id, String> getCallOffIdsByOpportunityIds(List<Call_Off_Contract__c> callOffContracts){
-		Map<Id, String> callOffIdsByOpportunityIds = new Map<Id, String>();
+	private static Map<Id, Id> getCallOffIdsByOpportunityIds(List<Call_Off_Contract__c> callOffContracts){
+		Map<Id, Id> callOffIdsByOpportunityIds = new Map<Id, Id>();
 		for (Call_Off_Contract__c callOffContract:callOffContracts){
 			callOffIdsByOpportunityIds.put(opportunityIdsByCallOffSysExternalIds.get(callOffContract.Sys_Id_External__c), callOffContract.Id);
 		}

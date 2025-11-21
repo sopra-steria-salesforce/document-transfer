@@ -1,6 +1,6 @@
 public with sharing class ServiceNowSyncCallOffRecords {
     static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
-    static Map<String,String> opportunityIdsByCallOffSysExternalIds = new Map<String, String>();
+    static Map<String,Id> opportunityIdsByCallOffSysExternalIds = new Map<String, Id>();
 
     public static void syncCallOffRecords() {
 		Logger.info('Retrieving call off records from ServiceNow');
