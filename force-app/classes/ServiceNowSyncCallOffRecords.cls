@@ -2,38 +2,29 @@ public with sharing class ServiceNowSyncCallOffRecords {
     static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
     static Map<String,String> opportunityId2CalloffSysExternalId = new Map<String, String>();
 
-    @Future(callout=true)
     public static void syncCallOffRecords() {
+		Logger.info('Retrieving call off records from ServiceNow');
         try {
-            Logger.info('Start syncing call off records').addTag('Sync call off records');
-            Logger.info('Settings: ' + settings).addTag('Sync call off records');
-            Logger.saveLog();
             HttpResponse response = Utils.doRequest(
                     Utils.NAMED_CREDENTIAL_SERVICE_NOW,
                     Utils.API_GET_ALL_ARCHIVES + '?sysparm_limit=3100&sysparm_offset=0&sysparm_query=sys_updated_on%3E' + String.valueOf(settings.LastCallOffSynchronizationTime__c).replaceAll(' ', '%20'),
                     Utils.METHOD_GET,
                     null
             );
-            Logger.info('Status code:', response.getStatus()).addTag('Sync call off records');
-            Logger.info('Response body:', response.getBody()).addTag('Sync call off records');
-            Logger.saveLog();
 
             if (response.getStatusCode() == 200) {
-                Logger.info('ServiceNow call succeeded with 200 OK');
                 OuterWrapper outerWrapper = deserializeResponse(response);
-                Logger.info('Received records: ' + outerWrapper.result.size());
-                Logger.saveLog();
+                Logger.info('# of received call off records: ' + outerWrapper.result.size());
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
-                CallOffContractIterable callOffContractIterable = new CallOffContractIterable(callOffRecords);
-                //upsertCallOffRecords(callOffRecords);
                 BatchUpsertCallOffRecords.opportunityId2CalloffSysExternalId = opportunityId2CalloffSysExternalId;
-                BatchUpsertCallOffRecords batchUpsertCallOffRecords = new BatchUpsertCallOffRecords(callOffRecords);
-                Database.executeBatch(batchUpsertCallOffRecords);
+				BatchUpsertCallOffRecords.callOffContracts=callOffRecords;
+				Database.executeBatch(new BatchUpsertCallOffRecords(),100);
             }
         }catch(Exception e) {
             Logger.error('Exception occurred during API call',  e).addTag('Sync call off records');
             Logger.saveLog();
         }
+		Logger.saveLog();
     }
 
     private static OuterWrapper deserializeResponse(HttpResponse response) {

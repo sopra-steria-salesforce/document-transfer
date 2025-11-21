@@ -43,3 +43,5 @@ target/
 
 # WebStorm
 .idea/
+
+**/graphql.config.yml
