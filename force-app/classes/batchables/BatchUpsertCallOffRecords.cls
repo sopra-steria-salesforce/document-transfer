@@ -35,7 +35,7 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
         }
     }
 	/**
-	 * @description get subset of Opportunities related to this batch of Call Off Contracts
+	 * @description: Get subset of Opportunities related to this batch of Call Off Contracts
 	 */
 	private static Map<Id, Id> getCallOffIdsByOpportunityIds(List<Call_Off_Contract__c> callOffContracts){
 		Map<Id, Id> callOffIdsByOpportunityIds = new Map<Id, Id>();
