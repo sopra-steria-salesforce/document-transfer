@@ -14,7 +14,7 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
 
     public void execute(Database.BatchableContext info, List<Call_Off_Contract__c> callOffContracts){
       Boolean foundError = false;
-        Database.UpsertResult[] upsertResults = Database.upsert(callOffContracts, Call_Off_Contract__c.Fields.Sys_Id_External__c, false);
+        Database.UpsertResult[] upsertResults = Database.upsert(callOffContracts, Call_Off_Contract__c.fields.Sys_Id_External__c, false);
         Logger.info('upsertResults: ', upsertResults).addTag('Sync call off records');
         for (Database.UpsertResult upsertResult : upsertResults) {
              Logger.info('upsertResult', upsertResult).addTag('Sync call off records');

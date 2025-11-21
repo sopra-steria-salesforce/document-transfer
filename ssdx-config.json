@@ -1,5 +1,5 @@
 {
-	"default_config": "config/project-scratch-def.json",
+	"default_config": "config/project-scratch-def-snapshot.json",
 	"pre_dependencies": [
 		{
 			"type": "metadata",
