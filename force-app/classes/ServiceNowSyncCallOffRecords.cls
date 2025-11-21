@@ -5,6 +5,9 @@ public with sharing class ServiceNowSyncCallOffRecords {
     @Future(callout=true)
     public static void syncCallOffRecords() {
         try {
+            Logger.info('Start syncing call off records').addTag('Sync call off records');
+            Logger.info('Settings: ' + settings).addTag('Sync call off records');
+            Logger.saveLog();
             HttpResponse response = Utils.doRequest(
                     Utils.NAMED_CREDENTIAL_SERVICE_NOW,
                     Utils.API_GET_ALL_ARCHIVES + '?sysparm_limit=3100&sysparm_offset=0&sysparm_query=sys_updated_on%3E' + String.valueOf(settings.LastCallOffSynchronizationTime__c).replaceAll(' ', '%20'),
