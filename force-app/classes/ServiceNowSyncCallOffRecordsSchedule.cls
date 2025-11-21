@@ -4,7 +4,6 @@
 
 global with sharing class ServiceNowSyncCallOffRecordsSchedule implements Schedulable {
     global void execute(SchedulableContext sc) {
-        Logger.info('ServiceNowSyncCallOffRecordsSchedule');
-        ServiceNowSyncCallOffRecords.syncCallOffRecords();
+        System.enqueueJob(new ServiceNowSyncCallOffRecords());
     }
 }
