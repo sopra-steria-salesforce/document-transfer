@@ -1,6 +1,6 @@
 public with sharing class ServiceNowSyncCallOffRecords {
     static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
-    static Map<String,String> opportunityId2CalloffSysExternalId = new Map<String, String>();
+    static Map<String,String> opportunityIdsByCallOffSysExternalIds = new Map<String, String>();
 
     public static void syncCallOffRecords() {
 		Logger.info('Retrieving call off records from ServiceNow');
@@ -16,7 +16,7 @@ public with sharing class ServiceNowSyncCallOffRecords {
                 OuterWrapper outerWrapper = deserializeResponse(response);
                 Logger.info('# of received call off records: ' + outerWrapper.result.size());
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
-                BatchUpsertCallOffRecords.opportunityId2CalloffSysExternalId = opportunityId2CalloffSysExternalId;
+                BatchUpsertCallOffRecords.opportunityIdsByCallOffSysExternalIds = opportunityIdsByCallOffSysExternalIds;
 				BatchUpsertCallOffRecords.callOffContracts=callOffRecords;
 				Database.executeBatch(new BatchUpsertCallOffRecords(),100);
             }
@@ -56,12 +56,12 @@ public with sharing class ServiceNowSyncCallOffRecords {
                 callOffRecord.Account__c = responseWrapper.customer_salesforce_id;
             }
             callOffRecord.Parent_Contract__c = externalIds2ContractArchiveId.get(responseWrapper.agreement_sys_id);
-            callOffRecord.Final_Date_Of_Expiry__c = responseWrapper.final_date_of_expiry;
+            callOffRecord.Final_Date_of_Expiry__c = responseWrapper.final_date_of_expiry;
             callOffRecord.FinalExpirationConfirmed__c = Boolean.valueOf(responseWrapper.final_expiration_confirmed);
             callOffRecord.Identification_Number__c = responseWrapper.identification_number;
             callOffRecord.Start_Date__c = responseWrapper.start_date;
             if(!String.isEmpty(responseWrapper.opportunity_salesforce_id)){
-                opportunityId2CalloffSysExternalId.put(responseWrapper.opportunity_salesforce_id, responseWrapper.archive_sys_id);
+                opportunityIdsByCallOffSysExternalIds.put(responseWrapper.archive_sys_id, responseWrapper.opportunity_salesforce_id);
             }
          //   callOffRecord.Sub_Area__c = responseWrapper.sub_area;
             callOffRecords.add(callOffRecord);
