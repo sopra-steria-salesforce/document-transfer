@@ -1,11 +1,7 @@
-public with sharing class BatchUpsertCallOffRecords implements Database.Batchable<sObject>, Database.Stateful{
-    public static Map<String,String> opportunityId2CalloffSysExternalId = new Map<String, String>();
-    private List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>();
-    static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
-    
-    public BatchUpsertCallOffRecords(List<Call_Off_Contract__c> callOffContracts) {
-        this.callOffContracts = callOffContracts;
-    }
+public with sharing class BatchUpsertCallOffRecords implements Database.Batchable<Call_Off_Contract__c>, Database.Stateful{
+    public static Map<String,String> opportunityId2CalloffSysExternalId;
+    public static List<Call_Off_Contract__c> callOffContracts;
+    private static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
     
     public Iterable<Call_Off_Contract__c> start(Database.BatchableContext info){ 
         Logger.info('start BatchUpsertCallOffRecords');
