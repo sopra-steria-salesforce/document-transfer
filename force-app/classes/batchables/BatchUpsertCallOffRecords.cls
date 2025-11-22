@@ -42,8 +42,15 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
 	}
 
     public void finish(Database.BatchableContext info){
-		ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
-		settings.LastCallOffSynchronizationTime__c = Datetime.now().addHours(-2);
-		update settings;
+		AsyncApexJob job = [
+				SELECT NumberOfErrors
+				FROM AsyncApexJob
+				WHERE Id = :info.getJobId()
+		];
+		if (job.NumberOfErrors==0) {
+			ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
+			settings.LastCallOffSynchronizationTime__c = Datetime.now().addHours(-2);
+			update settings;
+		}
     }
 }
