@@ -1,7 +1,6 @@
 public with sharing class BatchUpsertCallOffRecords implements Database.Batchable<Call_Off_Contract__c>, Database.Stateful{
     private Map<String,Id> opportunityIdsByCallOffSysExternalIds;
     private List<Call_Off_Contract__c> callOffContracts;
-    private static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
 
 	public BatchUpsertCallOffRecords(Map<String, Id> opportunityIdsByCallOffSysExternalIds, List<Call_Off_Contract__c> callOffContracts){
 		this.opportunityIdsByCallOffSysExternalIds=opportunityIdsByCallOffSysExternalIds;
@@ -13,26 +12,22 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
     }
 
     public void execute(Database.BatchableContext info, List<Call_Off_Contract__c> scope){
-		Boolean foundError = false;
-        Database.UpsertResult[] upsertResults = Database.upsert(scope, Call_Off_Contract__c.fields.Sys_Id_External__c, false);
-        for (Database.UpsertResult upsertResult : upsertResults) {
-             Logger.info('upsertResult', upsertResult).addTag('Sync call off records');
-            if (!upsertResult.isSuccess()) {
-                for (Database.Error error : upsertResult.getErrors()) {
-                    Logger.error('Error: ' + error.getStatusCode() + error.getMessage()).addTag('Sync call off records');
-                    foundError = true;
-                }
-            }
-        }
-        if(!foundError) {
-			Map<Id, Id> callOffIdsByOpportunityIds = getCallOffIdsByOpportunityIds(scope);
-            List<Opportunity> opportunities = [SELECT Id, Call_Off_Contract__c FROM Opportunity WHERE Id IN :callOffIdsByOpportunityIds.keySet()];
-            for(Opportunity opportunity : opportunities) {
-                opportunity.Call_Off_Contract__c = callOffIdsByOpportunityIds.get(opportunity.Id);
-            }
-            update opportunities;
-        } else{
-			Logger.saveLog();
+		try {
+			upsert scope Sys_Id_External__c;
+		}
+		catch (DmlException dmlException){
+			Logger.exception('Unexpected DML Exception when upserting call off contracts', scope,dmlException);
+		}
+		Map<Id, Id> callOffIdsByOpportunityIds = getCallOffIdsByOpportunityIds(scope);
+		List<Opportunity> opportunities = [SELECT Id, Call_Off_Contract__c FROM Opportunity WHERE Id IN :callOffIdsByOpportunityIds.keySet()];
+		for(Opportunity opportunity : opportunities) {
+			opportunity.Call_Off_Contract__c = callOffIdsByOpportunityIds.get(opportunity.Id);
+		}
+		try {
+			update opportunities;
+		}
+		catch (DmlException dmlException){
+			Logger.exception('Unexpected DML Exception when updating Opportunities with call off contract reference', scope,dmlException);
 		}
     }
 	/**
@@ -47,7 +42,15 @@ public with sharing class BatchUpsertCallOffRecords implements Database.Batchabl
 	}
 
     public void finish(Database.BatchableContext info){
-		settings.LastCallOffSynchronizationTime__c = Datetime.now().addHours(-2);
-		update settings;
+		AsyncApexJob job = [
+				SELECT NumberOfErrors
+				FROM AsyncApexJob
+				WHERE Id = :info.getJobId()
+		];
+		if (job.NumberOfErrors==0) {
+			ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
+			settings.LastCallOffSynchronizationTime__c = Datetime.now().addHours(-2);
+			update settings;
+		}
     }
 }
