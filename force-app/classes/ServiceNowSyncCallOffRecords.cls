@@ -17,17 +17,18 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 
             if (response.getStatusCode() == 200) {
                 OuterWrapper outerWrapper = deserializeResponse(response);
-                Logger.info('# of received call off records: ' + outerWrapper.result.size());
                 List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
-                BatchUpsertCallOffRecords.opportunityIdsByCallOffSysExternalIds = opportunityIdsByCallOffSysExternalIds;
-				BatchUpsertCallOffRecords.callOffContracts=callOffRecords;
-				Database.executeBatch(new BatchUpsertCallOffRecords(),100);
+				if (callOffRecords.isEmpty()) {
+					return;
+				}
+				Logger.info('# of received call off records: ' + callOffRecords.size());
+				BatchUpsertCallOffRecords batchUpsertCallOffRecords= new BatchUpsertCallOffRecords(opportunityIdsByCallOffSysExternalIds, callOffRecords);
+				Database.executeBatch(batchUpsertCallOffRecords,100);
             }
         }catch(Exception e) {
             Logger.error('Exception occurred during API call',  e).addTag('Sync call off records');
             Logger.saveLog();
         }
-		Logger.saveLog();
     }
 
     private static OuterWrapper deserializeResponse(HttpResponse response) {
