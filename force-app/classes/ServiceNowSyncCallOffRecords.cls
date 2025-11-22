@@ -1,7 +1,16 @@
 public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Database.AllowsCallouts{
-	static ServiceNow_Settings__c settings = [SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
-	static Map<String,Id> opportunityIdsByCallOffSysExternalIds = new Map<String, Id>();
 	private static Boolean logError = false;
+	private static ServiceNow_Settings__c settings {
+		get{
+			if (settings==null) {
+				settings=[SELECT Id, LastCallOffSynchronizationTime__c FROM ServiceNow_Settings__c LIMIT 1];
+			}
+			return settings;
+		}
+		private set;
+	}
+
+	private static Map<String,Id> opportunityIdsByCallOffSysExternalIds = new Map<String, Id>();
 
 	public void execute(QueueableContext context) {
 		syncCallOffRecords();
