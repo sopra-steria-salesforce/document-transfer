@@ -47,6 +47,29 @@ private class ServiceNowSyncCalloffsTest {
 		Assert.isFalse(ServiceNowSyncCallOffRecords.matchCustomerIdsFromServiceNowAgainstAccounts(callOffContracts).isEmpty());
 	}
 
+	@IsTest
+	static void testAddParentContractRelation(){
+		List<Contract_Archive__c> parentContracts = new List<Contract_Archive__c>{
+				new Contract_Archive__c(
+						Sys_Id_External__c = '123'
+				),
+				new Contract_Archive__c(
+						Sys_Id_External__c = 'abc'
+				)
+		};
+		insert parentContracts;
+		List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>{
+				new Call_Off_Contract__c(Sys_Id_External__c='321'),
+				new Call_Off_Contract__c(Sys_Id_External__c='cba')
+		};
+		Map<String, String> callOffSysExternalIdsByParentContractSysExternalIds = new Map<String, String>{
+				parentContracts[0].Sys_Id_External__c => callOffContracts[0].Sys_Id_External__c,
+				parentContracts[1].Sys_Id_External__c => callOffContracts[1].Sys_Id_External__c
+		};
+		callOffContracts=ServiceNowSyncCallOffRecords.addParentContractRelation(callOffContracts, callOffSysExternalIdsByParentContractSysExternalIds);
+		Assert.areEqual(parentContracts[0].Id, callOffContracts[0].Parent_Contract__c, 'Parent Contract should set as defined in callOffSysExternalIdsByParentContractSysExternalIds');
+		Assert.areEqual(parentContracts[1].Id, callOffContracts[1].Parent_Contract__c, 'Parent Contract should set as defined in callOffSysExternalIdsByParentContractSysExternalIds');
+	}
 
 	private class ServiceNowSyncCalloffsMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {

@@ -27,7 +27,7 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 
 			if (response.getStatusCode() == 200) {
 				OuterWrapper outerWrapper = deserializeResponse(response);
-				List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
+				List<Call_Off_Contract__c> callOffRecords = generateCallOffRecordsFromResponse(outerWrapper);
 				if (callOffRecords.isEmpty()) {
 					return;
 				}
@@ -47,13 +47,9 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 		return (OuterWrapper) JSON.deserialize(response.getBody(), OuterWrapper.class);
 	}
 
-	private static List<Call_Off_Contract__c> createCallOffRecords(OuterWrapper outerWrapper) {
+	private static List<Call_Off_Contract__c> generateCallOffRecordsFromResponse(OuterWrapper outerWrapper) {
 		List<Call_Off_Contract__c> callOffRecords = new List<Call_Off_Contract__c>();
-		List<Contract_Archive__c> contractArchives  = [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c];
-		Map<String, String> externalIds2ContractArchiveId = new Map<String, String>();
-		for(Contract_Archive__c contractArchive :contractArchives) {
-			externalIds2ContractArchiveId.put(contractArchive.Sys_Id_External__c, contractArchive.Id);
-		}
+		Map<String, String> callOffSysExternalIdsByParentContractSysExternalIds = new Map<String, String>();
 
 		for(ResponseWrapper responseWrapper : outerWrapper.result) {
 			Call_Off_Contract__c callOffRecord = new Call_Off_Contract__c(
@@ -61,7 +57,6 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 					Sys_Id_External__c = responseWrapper.archive_sys_id,
 					Contract_Type__c = responseWrapper.contract_type,
 					Final_Date_of_Expiry__c = responseWrapper.final_date_of_expiry,
-					Parent_Contract__c = externalIds2ContractArchiveId.get(responseWrapper.agreement_sys_id),
 					FinalExpirationConfirmed__c = Boolean.valueOf(responseWrapper.final_expiration_confirmed),
 					Identification_Number__c = responseWrapper.identification_number,
 					Start_Date__c = responseWrapper.start_date
@@ -71,6 +66,7 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 			if(!String.isEmpty(responseWrapper.opportunity_salesforce_id)){
 				opportunityIdsByCallOffSysExternalIds.put(responseWrapper.archive_sys_id, responseWrapper.opportunity_salesforce_id);
 			}
+			callOffSysExternalIdsByParentContractSysExternalIds.put(responseWrapper.agreement_sys_id, responseWrapper.archive_sys_id);
 
 			try {
 				callOffRecord.Account__c = responseWrapper.customer_salesforce_id;
@@ -80,10 +76,25 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 			}
 			callOffRecords.add(callOffRecord);
 		}
-
+		callOffRecords=addParentContractRelation(callOffRecords, callOffSysExternalIdsByParentContractSysExternalIds);
 		return validateCustomerIdsFromServiceNow(callOffRecords);
 	}
 
+	@TestVisible
+	private static List<Call_Off_Contract__c> addParentContractRelation(List<Call_Off_Contract__c> callOffContracts, Map<String, String> callOffSysExternalIdsByParentContractSysExternalIds){
+		Map<String, Id> parentContractIdsByCallOffSysExternalIds = new Map<String, Id>();
+		for (Contract_Archive__c parentContract: [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c WHERE Sys_Id_External__c IN: callOffSysExternalIdsByParentContractSysExternalIds.keySet()]){
+			parentContractIdsByCallOffSysExternalIds.put(
+					callOffSysExternalIdsByParentContractSysExternalIds.get(parentContract.Sys_Id_External__c),
+					parentContract.Id
+			);
+		}
+		for (Call_Off_Contract__c callOffContract:callOffContracts){
+			callOffContract.Parent_Contract__c=parentContractIdsByCallOffSysExternalIds.get(callOffContract.Sys_Id_External__c);
+		}
+		return callOffContracts;
+	}
+	
 	@TestVisible
 	private static List<Call_Off_Contract__c> validateCustomerIdsFromServiceNow(List<Call_Off_Contract__c> callOffContracts){
 		Set<Id> invalidCustomerIdsFromServiceNow = matchCustomerIdsFromServiceNowAgainstAccounts(callOffContracts);
