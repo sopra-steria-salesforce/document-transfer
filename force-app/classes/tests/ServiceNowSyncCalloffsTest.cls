@@ -22,9 +22,33 @@ private class ServiceNowSyncCalloffsTest {
 //        Assert.areEqual('Active', testCallOffContract.State__c);
 //        Assert.areEqual('123456', testCallOffContract.Number__c);
     }
+	@IsTest
+	static void testValidCustomerIdsFromServiceNow(){
+		List<Account> accounts = new List<Account>{
+				new Account(Name='Test Account 1'),
+				new Account(Name='Test Account 2')
+		};
+		insert accounts;
+		List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>{
+				new Call_Off_Contract__c(Account__c=accounts[0].Id),
+				new Call_Off_Contract__c(Account__c=accounts[1].Id)
+		};
+		Assert.isTrue(ServiceNowSyncCallOffRecords.matchCustomerIdsFromServiceNowAgainstAccounts(callOffContracts).isEmpty());
+	}
+
+	@IsTest
+	static void testInvalidCustomerIdsFromServiceNow(){
+		Account account = new Account(Name='Test Account');
+		insert account;
+		List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>{
+				new Call_Off_Contract__c(Account__c=account.Id),
+				new Call_Off_Contract__c(Account__c=TestDataFactory.generateFakeId(Account.getSObjectType()))
+		};
+		Assert.isFalse(ServiceNowSyncCallOffRecords.matchCustomerIdsFromServiceNowAgainstAccounts(callOffContracts).isEmpty());
+	}
 
 
-    private class ServiceNowSyncCalloffsMock implements HttpCalloutMock {
+	private class ServiceNowSyncCalloffsMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {
             // Create a fake response
             HttpResponse res = new HttpResponse();
