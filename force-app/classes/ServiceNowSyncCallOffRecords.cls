@@ -27,7 +27,7 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 
 			if (response.getStatusCode() == 200) {
 				OuterWrapper outerWrapper = deserializeResponse(response);
-				List<Call_Off_Contract__c> callOffRecords = createCallOffRecords(outerWrapper);
+				List<Call_Off_Contract__c> callOffRecords = generateCallOffRecordsFromResponse(outerWrapper);
 				if (callOffRecords.isEmpty()) {
 					return;
 				}
@@ -47,7 +47,7 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 		return (OuterWrapper) JSON.deserialize(response.getBody(), OuterWrapper.class);
 	}
 
-	private static List<Call_Off_Contract__c> createCallOffRecords(OuterWrapper outerWrapper) {
+	private static List<Call_Off_Contract__c> generateCallOffRecordsFromResponse(OuterWrapper outerWrapper) {
 		List<Call_Off_Contract__c> callOffRecords = new List<Call_Off_Contract__c>();
 		Map<String, String> callOffSysExternalIdsByParentContractSysExternalIds = new Map<String, String>();
 
