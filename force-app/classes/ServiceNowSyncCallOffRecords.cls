@@ -49,23 +49,23 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
             accountIds.add(acc.Id);
         }
         for(ResponseWrapper responseWrapper : outerWrapper.result) {
-            Call_Off_Contract__c callOffRecord = new Call_Off_Contract__c();
-            callOffRecord.Name = responseWrapper.archive_name.length() > 80 ? responseWrapper.archive_name.substring(0, 80) : responseWrapper.archive_name;
-            callOffRecord.Contract_Number__c = responseWrapper.archive_number.length() > 80 ? responseWrapper.archive_number.substring(0, 80) : responseWrapper.archive_number;
-            callOffRecord.ArchiveState__c = responseWrapper.archive_state;
-            callOffRecord.Sys_Id_External__c = responseWrapper.archive_sys_id;
-            callOffRecord.Contract_Type__c = responseWrapper.contract_type;
-            if(!String.isEmpty(responseWrapper.customer_salesforce_id) && accountIds.contains(responseWrapper.customer_salesforce_id)) {
-                callOffRecord.Account__c = responseWrapper.customer_salesforce_id;
-            }
-            callOffRecord.Parent_Contract__c = externalIds2ContractArchiveId.get(responseWrapper.agreement_sys_id);
-            callOffRecord.Final_Date_of_Expiry__c = responseWrapper.final_date_of_expiry;
-            callOffRecord.FinalExpirationConfirmed__c = Boolean.valueOf(responseWrapper.final_expiration_confirmed);
-            callOffRecord.Identification_Number__c = responseWrapper.identification_number;
-            callOffRecord.Start_Date__c = responseWrapper.start_date;
-            if(!String.isEmpty(responseWrapper.opportunity_salesforce_id)){
-                opportunityIdsByCallOffSysExternalIds.put(responseWrapper.archive_sys_id, responseWrapper.opportunity_salesforce_id);
-            }
+			Call_Off_Contract__c callOffRecord = new Call_Off_Contract__c(
+					ArchiveState__c = responseWrapper.archive_state,
+					Sys_Id_External__c = responseWrapper.archive_sys_id,
+					Contract_Type__c = responseWrapper.contract_type,
+					Final_Date_of_Expiry__c = responseWrapper.final_date_of_expiry,
+					Parent_Contract__c = externalIds2ContractArchiveId.get(responseWrapper.agreement_sys_id),
+					FinalExpirationConfirmed__c = Boolean.valueOf(responseWrapper.final_expiration_confirmed),
+					Identification_Number__c = responseWrapper.identification_number,
+					Start_Date__c = responseWrapper.start_date
+			);
+			callOffRecord.Name = responseWrapper.archive_name.length() > 80 ? responseWrapper.archive_name.substring(0, 80) : responseWrapper.archive_name;
+			callOffRecord.Contract_Number__c = responseWrapper.archive_number.length() > 80 ? responseWrapper.archive_number.substring(0, 80) : responseWrapper.archive_number;
+			if(!String.isEmpty(responseWrapper.customer_salesforce_id) && accountIds.contains(responseWrapper.customer_salesforce_id)) {
+				callOffRecord.Account__c = responseWrapper.customer_salesforce_id;
+			if(!String.isEmpty(responseWrapper.opportunity_salesforce_id)){
+				opportunityIdsByCallOffSysExternalIds.put(responseWrapper.archive_sys_id, responseWrapper.opportunity_salesforce_id);
+			}
             callOffRecords.add(callOffRecord);
         }
         return callOffRecords;
