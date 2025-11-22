@@ -94,6 +94,7 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 		}
 		return callOffContracts;
 	}
+	
 	@TestVisible
 	private static List<Call_Off_Contract__c> validateCustomerIdsFromServiceNow(List<Call_Off_Contract__c> callOffContracts){
 		Set<Id> invalidCustomerIdsFromServiceNow = matchCustomerIdsFromServiceNowAgainstAccounts(callOffContracts);
