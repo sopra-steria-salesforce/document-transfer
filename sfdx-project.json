@@ -3,17 +3,32 @@
         {
             "path": "force-app",
             "package": "document-transfer",
-            "versionNumber": "0.14.0.NEXT",
+            "versionNumber": "0.15.0.NEXT",
             "versionDescription": "Handles document transfer logic, logging, and integration support.",
             "default": true,
-            "seedMetadata": { "path": "pre_dependencies/standardValueSets" },
+            "seedMetadata": {
+                "path": "pre_dependencies/standardValueSets"
+            },
             "dependencies": [
-                { "package": "NebulaLogger@4.16.0.2" },
-                { "package": "DashboardsGSP@2.9.0.1" },
-                { "package": "Pardot@5.5.0.2" },
-                { "package": "LightningMessagingUtility@1.5.0.1" },
-                { "package": "trigger-actions-framework@0.3.2" },
-                { "package": "platform-base", "versionNumber": "2.27.0.LATEST" }
+                {
+                    "package": "NebulaLogger@4.16.0.2"
+                },
+                {
+                    "package": "DashboardsGSP@2.9.0.1"
+                },
+                {
+                    "package": "Pardot@5.5.0.2"
+                },
+                {
+                    "package": "LightningMessagingUtility@1.5.0.1"
+                },
+                {
+                    "package": "trigger-actions-framework@0.3.2"
+                },
+                {
+                    "package": "platform-base",
+                    "versionNumber": "2.27.0.LATEST"
+                }
             ]
         }
     ],
