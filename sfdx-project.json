@@ -35,7 +35,7 @@
     "name": "document-transfer",
     "namespace": "",
     "sfdcLoginUrl": "https://login.salesforce.com",
-    "sourceApiVersion": "63.0",
+    "sourceApiVersion": "65.0",
     "packageAliases": {
         "NebulaLogger@4.16.0.2": "04t5Y0000015pGyQAI",
         "DashboardsGSP@2.9.0.1": "04t1n000002WswiAAC",
