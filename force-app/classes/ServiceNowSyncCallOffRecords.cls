@@ -66,7 +66,6 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
             if(!String.isEmpty(responseWrapper.opportunity_salesforce_id)){
                 opportunityIdsByCallOffSysExternalIds.put(responseWrapper.archive_sys_id, responseWrapper.opportunity_salesforce_id);
             }
-         //   callOffRecord.Sub_Area__c = responseWrapper.sub_area;
             callOffRecords.add(callOffRecord);
         }
         return callOffRecords;
@@ -77,25 +76,17 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
     }
 
     public class ResponseWrapper {
-        public String agreement_business_unit;
-        public String agreement_internal_number;
-        public String agreement_name;
         public String agreement_sys_id;
-        public String archive_internal_number;
         public String archive_name;
         public String archive_number;
         public String archive_state;
         public String archive_sys_id;
-        public String contract_approved;
-        public String contract_signed;
         public String contract_type;
-        public String customer_name;
         public String customer_salesforce_id;
         public String final_date_of_expiry;
         public String final_expiration_confirmed;
         public String identification_number;
         public String start_date;
         public String opportunity_salesforce_id;
-        public String sub_area;
     }
 }
