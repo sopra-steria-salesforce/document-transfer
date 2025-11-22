@@ -50,7 +50,6 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
         }
         for(ResponseWrapper responseWrapper : outerWrapper.result) {
             Call_Off_Contract__c callOffRecord = new Call_Off_Contract__c();
-            callOffRecord.Identification_Number__c = responseWrapper.archive_internal_number;
             callOffRecord.Name = responseWrapper.archive_name.length() > 80 ? responseWrapper.archive_name.substring(0, 80) : responseWrapper.archive_name;
             callOffRecord.Contract_Number__c = responseWrapper.archive_number.length() > 80 ? responseWrapper.archive_number.substring(0, 80) : responseWrapper.archive_number;
             callOffRecord.ArchiveState__c = responseWrapper.archive_state;
