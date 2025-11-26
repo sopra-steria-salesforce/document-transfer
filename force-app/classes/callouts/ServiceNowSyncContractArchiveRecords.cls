@@ -99,21 +99,20 @@ public with sharing class ServiceNowSyncContractArchiveRecords {
             }
             if (!foundError) {
                 List<Contract_Archive__c> contractArchives = [SELECT Id, Sys_Id_External__c FROM Contract_Archive__c WHERE Sys_Id_External__c IN :opportunityId2ExternalId.values()];
-                Logger.debug('ContractArchives', contractArchives).addTag('Sync Contact Archive Records');
                 Map<String,String> externalId2contractId = new Map<String,String>();
                 for(Contract_Archive__c contractArchive : contractArchives){
                     externalId2contractId.put(contractArchive.Sys_Id_External__c, contractArchive.Id);
                 }
                 List<Opportunity> opportunities = [SELECT Id, Contract_Lookup__c FROM Opportunity WHERE Id IN :opportunityId2ExternalId.keySet()];
-                Logger.debug('Opportunites', opportunities).addTag('Sync Contact Archive Records');
                 for(Opportunity opp : opportunities) {
                     opp.Contract_Lookup__c = externalId2contractId.get(opportunityId2ExternalId.get(opp.Id));
                 }
                 Database.update(opportunities,true);
                 settings.LastContractsSynchronization__c = Datetime.now().addHours(-2);
                 update settings;
-            }
-            Logger.saveLog();
+            } else{
+				Logger.saveLog();
+			}
 //        } catch (Exception e) {
 //            Utils.logFailure('ServiceNowSyncContractArchiveRecords', 'upsertContractArchives', e.getMessage(), 'Failed', UserInfo.getUserName(), 'Exception occurred during upserting Contract Archive records');
 //        }
