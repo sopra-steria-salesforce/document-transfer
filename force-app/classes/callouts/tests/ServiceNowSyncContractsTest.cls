@@ -22,7 +22,7 @@ public with sharing class ServiceNowSyncContractsTest {
         mock.setStatusCode(200);
         mock.setStaticResource('syncContractsResponse');
 		Test.setMock(HttpCalloutMock.class, mock);
-		
+
         Test.startTest();
         ServiceNowSyncContractArchiveRecords.syncContractArchiveRecords();
         Test.stopTest();
