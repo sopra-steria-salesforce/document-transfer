@@ -65,11 +65,7 @@ private class ServiceNowSyncCalloffsTest {
 
 	@IsTest
 	static void testValidCustomerIdsFromServiceNow() {
-		List<Account> accounts = new List<Account>{
-				new Account(Name = 'Test Account 1'),
-				new Account(Name = 'Test Account 2')
-		};
-		insert accounts;
+		List<Account> accounts = [SELECT Id FROM Account];
 		List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>{
 				new Call_Off_Contract__c(Account__c = accounts[0].Id),
 				new Call_Off_Contract__c(Account__c = accounts[1].Id)
@@ -79,8 +75,7 @@ private class ServiceNowSyncCalloffsTest {
 
 	@IsTest
 	static void testInvalidCustomerIdsFromServiceNow() {
-		Account account = new Account(Name = 'Test Account');
-		insert account;
+		Account account = [SELECT Id FROM Account LIMIT 1];
 		List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>{
 				new Call_Off_Contract__c(Account__c = account.Id),
 				new Call_Off_Contract__c(Account__c = TestDataFactory.generateFakeId(Account.getSObjectType()))
@@ -90,15 +85,7 @@ private class ServiceNowSyncCalloffsTest {
 
 	@IsTest
 	static void testAddParentContractRelation() {
-		List<Contract_Archive__c> parentContracts = new List<Contract_Archive__c>{
-				new Contract_Archive__c(
-						Sys_Id_External__c = '123'
-				),
-				new Contract_Archive__c(
-						Sys_Id_External__c = 'abc'
-				)
-		};
-		insert parentContracts;
+		List<Contract_Archive__c> parentContracts = [SELECT Sys_Id_External__c FROM Contract_Archive__c];
 		List<Call_Off_Contract__c> callOffContracts = new List<Call_Off_Contract__c>{
 				new Call_Off_Contract__c(Sys_Id_External__c = '321'),
 				new Call_Off_Contract__c(Sys_Id_External__c = 'cba')
