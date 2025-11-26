@@ -21,22 +21,10 @@ public with sharing class ServiceNowSyncContractsTest {
         mock.setHeader('Content-Type', 'application/json');
         mock.setStatusCode(200);
         mock.setStaticResource('syncContractsResponse');
-        Test.setMock(HttpCalloutMock.class, mock);
-        
+		Test.setMock(HttpCalloutMock.class, mock);
+		
         Test.startTest();
         ServiceNowSyncContractArchiveRecords.syncContractArchiveRecords();
         Test.stopTest();
-    }
-
-    public class ServiceNowSyncContractsMock implements HttpCalloutMock {
-        HttpResponse response;
-
-        public ServiceNowSyncContractsMock(HttpResponse response) {
-            this.response = response;
-        }
-
-        public HttpResponse respond(HttpRequest request) {
-            return response;
-        }
     }
 }
