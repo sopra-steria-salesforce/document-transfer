@@ -1,0 +1,50 @@
+{
+	"result": [
+		{
+			"agreement_business_unit": "DPS Consulting",
+			"agreement_internal_number": "AGR123",
+			"agreement_name": "Nytt ITSM system #SN",
+			"agreement_sys_id": "123",
+			"archive_internal_number": "123",
+			"archive_name": "UX hos Kunde",
+			"archive_number": "",
+			"archive_state": "Draft",
+			"archive_sys_id": "123",
+			"contract_approved": "No",
+			"contract_signed": "At risk",
+			"contract_type": "Call off",
+			"customer_name": "Kunde AS - 123",
+			"customer_salesforce_id": "123",
+			"final_date_of_expiry": "",
+			"final_expiration_confirmed": "0",
+			"identification_number": "",
+			"start_date": "",
+			"sub_area": "",
+			"sys_updated_on": "26.11.2025 09:46:33",
+			"opportunity_salesforce_id": "123"
+		},
+		{
+			"agreement_business_unit": "DPS Consulting",
+			"agreement_internal_number": "AGR321",
+			"agreement_name": "Master Data Management service",
+			"agreement_sys_id": "321",
+			"archive_internal_number": "ARC321",
+			"archive_name": "MdM 321",
+			"archive_number": "",
+			"archive_state": "Expired",
+			"archive_sys_id": "321",
+			"contract_approved": "Yes",
+			"contract_signed": "Yes",
+			"contract_type": "Purchase Order (PO)",
+			"customer_name": "Kunde ASA - 312",
+			"customer_salesforce_id": "321",
+			"final_date_of_expiry": "2026-12-31",
+			"final_expiration_confirmed": "0",
+			"identification_number": "321",
+			"start_date": "2023-01-01",
+			"sub_area": "",
+			"sys_updated_on": "26.11.2025 09:40:34",
+			"opportunity_salesforce_id": "321"
+		}
+	]
+}
