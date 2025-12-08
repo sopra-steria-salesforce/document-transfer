@@ -31,7 +31,7 @@ public inherited sharing class AwardedOpportunities extends Opportunities{
 			if (doesOpportunityOwnerCountryMatchNavisionCustomerCountry(parentAccount, opportunityOwner) || parentAccount.Name == 'Sopra Steria AS')  {
 				opportunitiesWhereOwnerCountryMatchesNavisionCountry.add(opportunity);
 			} else{
-				Logger.error('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
+				Logger.info('Opportunity Owner Country: "'+opportunity.Owner_Country__c+'" does not match the Account\'s Country in Navision', opportunity);
 				ownerCountryMismatch = true;
 			}
 		}
