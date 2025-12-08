@@ -72,7 +72,6 @@ public with sharing class AwardedOpportunitiesTest {
 		}
 
 		AwardedOpportunities awardedOpportunities = new AwardedOpportunities(opportunities);
-		System.debug(awardedOpportunities.getRecords());
 		awardedOpportunities.filterByMatchingOwnerCountry();
 		Assert.areEqual(1, awardedOpportunities.size(), '1 Awarded Opportunity Owner should match Navision Country');
 		Assert.areEqual(opportunities[1].Id, awardedOpportunities.getRecords()[0].Id, 'Only 1 Awarded Opportunity Owner Matches Navision Country');
