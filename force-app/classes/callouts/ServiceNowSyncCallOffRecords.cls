@@ -17,10 +17,16 @@ public with sharing class ServiceNowSyncCallOffRecords implements Queueable, Dat
 	}
 	public static void syncCallOffRecords() {
 		Logger.info('Retrieving call off records from ServiceNow');
+		String maxCallOffsToRetrieve='sysparm_limit=3100';
+		String offset='sysparm_offset=0';
+		String filterExpiredCallOffs = 'state!=expired';
+		String getCallOffsUpdatedSince = 'sysparm_query=sys_updated_on%3E' + String.valueOf(settings.LastCallOffSynchronizationTime__c).replaceAll(' ', '%20');
+		Logger.debug('Request URL = ' + Utils.API_GET_ALL_ARCHIVES + '?'+maxCallOffsToRetrieve+'&'+offset+'&'+filterExpiredCallOffs+'&'+getCallOffsUpdatedSince);
+		Logger.saveLog();
 		try {
 			HttpResponse response = Utils.doRequest(
 					Utils.NAMED_CREDENTIAL_SERVICE_NOW,
-					Utils.API_GET_ALL_ARCHIVES + '?sysparm_limit=3100&sysparm_offset=0&sysparm_query=sys_updated_on%3E' + String.valueOf(settings.LastCallOffSynchronizationTime__c).replaceAll(' ', '%20'),
+					Utils.API_GET_ALL_ARCHIVES + '?'+maxCallOffsToRetrieve+'&'+maxCallOffsToRetrieve+'&'+offset+'&'+filterExpiredCallOffs+'&'+getCallOffsUpdatedSince,
 					Utils.METHOD_GET,
 					null
 			);
