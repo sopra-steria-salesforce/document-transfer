@@ -7,6 +7,11 @@
 		}
 	],
 	"pre_deploy": [],
-	"post_deploy": [],
+	"post_deploy": [
+		{
+			"type": "permissionSet",
+			"value": "Bypass_Read_Only_Mode"
+		}
+	],
 	"post_install": []
 }
