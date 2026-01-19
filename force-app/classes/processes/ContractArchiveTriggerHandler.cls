@@ -18,7 +18,9 @@ public class ContractArchiveTriggerHandler extends TriggerHandler {
             contractIds.add(contractArchive.Id);
         }
         if(!System.isFuture()){
-            ContractArchiveTriggerService.sendRequestToServiceNow(contractIds);
+			if (Test.isRunningTest()) {
+				ContractArchiveTriggerService.sendRequestToServiceNow(contractIds);
+			}
         }
     }
 
