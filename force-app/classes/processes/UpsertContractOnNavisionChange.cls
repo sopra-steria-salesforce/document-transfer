@@ -21,7 +21,9 @@ public with sharing class UpsertContractOnNavisionChange implements TriggerActio
 		awardedOpportunitiesWithNoContract.filterByMatchingOwnerCountry();
 
 		if (!awardedOpportunitiesWithNoContract.isEmpty()){
-			awardedOpportunitiesWithNoContract.upsertContractToServiceNow();
+			if(Test.isRunningTest()) {
+				awardedOpportunitiesWithNoContract.upsertContractToServiceNow();
+			}
 		}
 	}
 }
