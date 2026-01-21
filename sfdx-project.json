@@ -7,11 +7,7 @@
             "versionDescription": "Handles document transfer logic, logging, and integration support.",
             "default": true,
             "seedMetadata": { "path": "pre_dependencies/standardValueSets" },
-			"apexTestAccess": {
-				"permissionSets": [
-					"Bypass_Read_Only_Mode"
-				]
-			},
+            "apexTestAccess": { "permissionSets": ["Bypass_Read_Only_Mode"] },
             "dependencies": [
                 { "package": "NebulaLogger@4.16.0.2" },
                 { "package": "DashboardsGSP@2.9.0.1" },
